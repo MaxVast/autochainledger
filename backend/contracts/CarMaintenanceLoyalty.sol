@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 // ERC20 Token contract
 contract CarMaintenanceLoyalty is ERC20, Ownable {
-    mapping(address => uint256) balances;
+    mapping(address => uint256) totalTokens;
     mapping(address => bool) admins;
 
     string _name;
@@ -35,14 +35,14 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     }
 
     function addCagnotte(address _account, uint256 _amount) external onlyAdmins {
-        balances[_account] += _amount;
+        totalTokens[_account] += _amount;
     }
 
     function mint(address _account) external onlyAdmins {
-        _mint(_account, balances[_account]);
+        _mint(_account, totalTokens[_account]);
     }
 
     function balanceOf(address _account) public view override returns (uint256) {
-        return balances[_account];
+        return totalTokens[_account];
     }
 }

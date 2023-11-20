@@ -4,14 +4,15 @@ pragma solidity 0.8.20;
 // Import dependencies
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./CarMaintenanceLoyalty.sol";
 
 // @title A contract for a pass maintenance vehicle
 // @author MaxVast
-// @dev Implementation Openzeppelin Ownable, ERC721, ERC721Enumerable
-contract CarMaintenanceBook is ERC721, Ownable {
+// @dev Implementation Openzeppelin Ownable, ERC721, ERC721Enumerable, ERC721URIStorage
+contract CarMaintenanceBook is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     // Mapping from address to claim token
     mapping(address => bool) claimedTokens;
     // Mapping from Token ID to address
@@ -30,6 +31,8 @@ contract CarMaintenanceBook is ERC721, Ownable {
     CarMaintenanceLoyalty public cagnotteToken;
 
     event TokenClaimed(address indexed user, uint256 tokenId);
+
+    event DistributorRegistered(address indexed DistributorAddress);
     
     // Modifier to restrict access to only registered voters
     modifier onlyDistributors() {
@@ -47,6 +50,7 @@ contract CarMaintenanceBook is ERC721, Ownable {
     function registerDistributor(address _distributor) external onlyOwner {
         require(!distributors[_distributor], "Distributor is already registered");
         distributors[_distributor] = true;
+        emit DistributorRegistered(_distributor);
     }
 
     // Function to set the ERC20 cagnotte token
@@ -55,7 +59,7 @@ contract CarMaintenanceBook is ERC721, Ownable {
     }
 
     /// @notice Allows you to claim an SBT and send it to the address
-    function claimToken(string calldata _vin, address _to) external onlyDistributors {
+    function claimToken(string calldata _vin, string calldata _uri, address _to) external onlyDistributors {
         //require(!_exists(generateTokenId(_vin)), "Token does not exist");
         require(!claimedTokens[_to], "Token already claimed");
 
@@ -65,6 +69,7 @@ contract CarMaintenanceBook is ERC721, Ownable {
         // Generate token internal
         uint256 tokenId = generateTokenId(_vin);
         _safeMint(_to, tokenId);
+        _setTokenURI(tokenId, _uri);
         
         // Marks token Id requested from wallet
         balance[tokenId] = _to;
@@ -111,5 +116,39 @@ contract CarMaintenanceBook is ERC721, Ownable {
         uint256 _idToken = generateTokenId(_vin);
         //require(_exists(_idToken), "Token does not exist");
         return Maintenances[_idToken][_idMaintenance];
+    }
+
+    // The following functions are overrides required by Solidity.
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721, ERC721Enumerable)
+        returns (address)
+    {
+        return super._update(to, tokenId, auth);
+    }
+
+    function _increaseBalance(address account, uint128 value)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._increaseBalance(account, value);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }
