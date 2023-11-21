@@ -53,7 +53,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
         _;
     }
 
-    constructor(address _cagnotteToken) ERC721("Pass Maintenance Auto", "pass-auto") {
+    constructor(address _cagnotteToken) ERC721("Pass Maintenance Auto", "pass-auto") Ownable(msg.sender) {
         cagnotteToken = CarMaintenanceLoyalty(_cagnotteToken);
     }
 
@@ -70,7 +70,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
 
     /// @notice Allows you to claim an SBT and send it to the address
     function safeMint(address _to, uint256 _tokenId, string calldata _uri) public onlyDistributor {
-        require(!_exists(_tokenId), "Token already claimed");
+        require(ownerOf(_tokenId) != address(0), "Token already claimed");
         _safeMint(_to, _tokenId);
         tokenData[_tokenId].uri = _uri;
         tokenData[_tokenId].locked = true;
@@ -78,6 +78,18 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
         cagnotteToken.addCagnotte(_to, 1000);
         emit TokenClaimed(_to, _tokenId);
     }
+
+    /*/// @notice Allow listing all addresses of NFT owners
+    function getAllOwners() external view returns (address[] memory) {
+        uint256 totalSupply = totalSupply();
+        address[] memory owners = new address[](totalSupply);
+
+        for (uint256 i = 0; i < totalSupply; i++) {
+            owners[i] = ownerOf(tokenByIndex(i));
+        }
+
+        return owners;
+    }*/
 
     /// @notice Returns the locking status of an Soulbound Token
     /// @dev SBTs assigned to zero address are considered invalid, and queries
@@ -89,26 +101,26 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     }
 
     function unlockToken(uint256 _tokenId) public onlyDistributor {
-        require(_exists(_tokenId), "Token not exists");
+        require(ownerOf(_tokenId) != address(0), "Token not exists");
         tokenData[_tokenId].locked = false;
         emit Unlocked(_tokenId);
     }
 
     function reclaimToken(address _from, uint256 _tokenId) external onlyDistributor {
-        require(_exists(_tokenId), "Token does not exist");
+        require(ownerOf(_tokenId) != address(0), "Token does not exist");
         require(ownerOf(_tokenId) == _from, "Token does not belong to the specified address");
         _transfer(_from, msg.sender, _tokenId);
         tokenData[_tokenId].locked = false;
     }
 
     function transferTokenNew(address _from, address _to, uint256 _tokenId) external onlyDistributor {
-        require(_exists(_tokenId), "Token does not exist");
+        require(ownerOf(_tokenId) != address(0), "Token does not exist");
         require(ownerOf(_tokenId) == _from, "Token does not belong to the specified address");
         _transfer(_from, _to, _tokenId);
     }
 
     function getTokenURI(uint256 _tokenId) public view returns (string memory) {
-        require(_exists(_tokenId), "Token does not exist");
+        require(ownerOf(_tokenId) != address(0), "Token does not exist");
         return tokenData[_tokenId].uri;
     }
 
@@ -118,7 +130,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
 
     function addMaintenance(string calldata _maintenance, string calldata _vin) external onlyDistributor {
         uint256 _idToken = generateTokenId(_vin);
-        require(_exists(_idToken), "Token does not exist");
+        require(ownerOf(_idToken) != address(0), "Token does not exist");
         Maintenances[_idToken].push(Maintenance(_maintenance, block.timestamp));
         // Credit 100 tokens to the cagnotte for each maintenance
         cagnotteToken.addCagnotte(ownerOf(_idToken), 100);
@@ -126,19 +138,19 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
 
     function getMaintenanceHistory(string calldata _vin) external view returns (Maintenance[] memory) {
         uint256 _idToken = generateTokenId(_vin);
-        require(_exists(_idToken), "Token does not exist");
+        require(ownerOf(_idToken) != address(0), "Token does not exist");
         return Maintenances[_idToken];
     }
 
     function getLengthMaintenanceHistory(string calldata _vin) external view returns (uint) {
         uint256 _idToken = generateTokenId(_vin);
-        require(_exists(_idToken), "Token does not exist");
+        require(ownerOf(_idToken) != address(0), "Token does not exist");
         return Maintenances[_idToken].length;
     }
 
     function gethMaintenanceHistoryById(string calldata _vin, uint _idMaintenance) external view returns (Maintenance memory) {
         uint256 _idToken = generateTokenId(_vin);
-        require(_exists(_idToken), "Token does not exist");
+        require(ownerOf(_idToken) != address(0), "Token does not exist");
         return Maintenances[_idToken][_idMaintenance];
     }
 
