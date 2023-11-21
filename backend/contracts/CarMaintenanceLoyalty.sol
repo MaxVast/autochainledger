@@ -3,9 +3,12 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 // ERC20 Token contract
 contract CarMaintenanceLoyalty is ERC20, Ownable {
+    using SafeERC20 for IERC20;
+
     mapping(address => uint256) totalTokens;
     mapping(address => bool) admins;
 
@@ -44,5 +47,25 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
 
     function balanceOf(address _account) public view override returns (uint256) {
         return totalTokens[_account];
+    }
+
+    function safeTransfer(address to, uint256 value) public {
+        IERC20(address(this)).safeTransfer(to, value);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 value) public {
+        IERC20(address(this)).safeTransferFrom(from, to, value);
+    }
+
+    function safeIncreaseAllowance(address spender, uint256 value) public {
+        IERC20(address(this)).safeIncreaseAllowance(spender, value);
+    }
+
+    function safeDecreaseAllowance(address spender, uint256 requestedDecrease) public {
+        IERC20(address(this)).safeDecreaseAllowance(spender, requestedDecrease);
+    }
+
+    function forceApprove(address spender, uint256 value) public {
+        IERC20(address(this)).forceApprove(spender, value);
     }
 }
