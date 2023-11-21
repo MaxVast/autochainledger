@@ -83,7 +83,7 @@ contract CarMaintenanceBook is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
 
     /// @notice Allows you to revoke a wallet's the NFT Pass Vehicle 
     function recoverTokens(address from, uint256 _tokenId) external onlyDistributors {
-        require(balance[_tokenId] == from, "The wallet doesn't hold this token");
+        require(balance[_tokenId] == from, "The wallet doesnt hold this token");
         // Burn the NFT
         _burn(_tokenId);
     }
