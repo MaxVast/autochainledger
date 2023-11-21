@@ -1,18 +1,31 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
-// Import dependencies
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-
 import "./CarMaintenanceLoyalty.sol";
+import "./IERC5192.sol";
 
-// @title A contract for a pass maintenance vehicle
-// @author MaxVast
-// @dev Implementation Openzeppelin Ownable, ERC721, ERC721Enumerable, ERC721URIStorage
-contract CarMaintenanceBook is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
+/// @title A contract for a pass maintenance vehicle
+/// @author MaxVast
+/// @dev Implementation Openzeppelin Ownable, ERC721 and Interface IERC5192
+contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
+    //Struct to store information NFT
+    struct TokenData {
+        string uri;
+        bool locked;
+    }
+
+    //Struct to store information Maintenance
+    struct Maintenance {
+        string maintenance;
+        uint256 dateMaintenance;
+    }
+
+    // Mapping from Token ID to Maintenance
+    mapping(uint256 => Maintenance[]) Maintenances;
+    // Mapping from Token ID to tokenData
+    mapping(uint256 => TokenData) private tokenData;
     // Mapping from address to claim token
     mapping(address => bool) claimedTokens;
     // Mapping from Token ID to address
@@ -20,81 +33,92 @@ contract CarMaintenanceBook is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     // Mapping to store distributor
     mapping(address => bool) public distributors;
 
-    struct Maintenance {
-        string maintenance;
-        uint256 dateMaintenance;
-    }
-
-    mapping(uint256 => Maintenance[]) Maintenances;
-
     // ERC20 Token for the cagnotte
     CarMaintenanceLoyalty public cagnotteToken;
 
+    /// @notice Emitted when the token is claim.
+    /// @dev If a token is claimed, this event should be emitted.
+    /// @param tokenId The identifier for a token.
     event TokenClaimed(address indexed user, uint256 tokenId);
 
     event DistributorRegistered(address indexed DistributorAddress);
-    
-    // Modifier to restrict access to only registered voters
-    modifier onlyDistributors() {
-        require(distributors[msg.sender], "You are not a distributor");
+
+    modifier onlyDistributor() {
+        require(msg.sender == owner() || distributors[msg.sender], "Not a distributor");
         _;
     }
 
-    // Constructor to initialize the contract and the Workflow Status
-    constructor(address _cagnotteToken) ERC721("Pass Maintenance Auto", "pass-auto") Ownable(msg.sender) {
-        distributors[msg.sender] = true;
+    modifier IsTransferAllowed(uint256 _tokenId) {
+        require(!tokenData[_tokenId].locked, "Token is locked");
+        _;
+    }
+
+    constructor(address _cagnotteToken) ERC721("Pass Maintenance Auto", "pass-auto") {
         cagnotteToken = CarMaintenanceLoyalty(_cagnotteToken);
     }
 
-    // Function to register a distributor
-    function registerDistributor(address _distributor) external onlyOwner {
+    function setDistributor(address _distributor) external onlyOwner {
         require(!distributors[_distributor], "Distributor is already registered");
         distributors[_distributor] = true;
         emit DistributorRegistered(_distributor);
     }
 
-    // Function to set the ERC20 cagnotte token
+     // Function to set the ERC20 cagnotte token
     function setCagnotteToken(address _cagnotteToken) external onlyOwner {
         cagnotteToken = CarMaintenanceLoyalty(_cagnotteToken);
     }
 
     /// @notice Allows you to claim an SBT and send it to the address
-    function claimToken(string calldata _vin, string calldata _uri, address _to) external onlyDistributors {
-        //require(!_exists(generateTokenId(_vin)), "Token does not exist");
-        require(!claimedTokens[_to], "Token already claimed");
+    function safeMint(address _to, uint256 _tokenId, string calldata _uri) public onlyDistributor {
+        require(!_exists(_tokenId), "Token already claimed");
+        _safeMint(_to, _tokenId);
+        tokenData[_tokenId].uri = _uri;
+        tokenData[_tokenId].locked = true;
 
-        // Marks token as claimed
-        claimedTokens[_to] = true;
-
-        // Generate token internal
-        uint256 tokenId = generateTokenId(_vin);
-        _safeMint(_to, tokenId);
-        _setTokenURI(tokenId, _uri);
-        
-        // Marks token Id requested from wallet
-        balance[tokenId] = _to;
-
-        // Credit 1000 tokens to the cagnotte
         cagnotteToken.addCagnotte(_to, 1000);
-
-        // Emits an event to notify the token claim
-        emit TokenClaimed(_to, tokenId);
+        emit TokenClaimed(_to, _tokenId);
     }
 
-    /// @notice Allows you to revoke a wallet's the NFT Pass Vehicle 
-    function recoverTokens(address from, uint256 _tokenId) external onlyDistributors {
-        require(balance[_tokenId] == from, "The wallet doesnt hold this token");
-        // Burn the NFT
-        _burn(_tokenId);
+    /// @notice Returns the locking status of an Soulbound Token
+    /// @dev SBTs assigned to zero address are considered invalid, and queries
+    /// about them do throw.
+    /// @param _tokenId The identifier for an SBT.
+    function locked(uint256 _tokenId) external view returns (bool) {
+        require(ownerOf(_tokenId) != address(0));
+        return tokenData[_tokenId].locked;
+    }
+
+    function unlockToken(uint256 _tokenId) public onlyDistributor {
+        require(_exists(_tokenId), "Token not exists");
+        tokenData[_tokenId].locked = false;
+        emit Unlocked(_tokenId);
+    }
+
+    function reclaimToken(address _from, uint256 _tokenId) external onlyDistributor {
+        require(_exists(_tokenId), "Token does not exist");
+        require(ownerOf(_tokenId) == _from, "Token does not belong to the specified address");
+        _transfer(_from, msg.sender, _tokenId);
+        tokenData[_tokenId].locked = false;
+    }
+
+    function transferTokenNew(address _from, address _to, uint256 _tokenId) external onlyDistributor {
+        require(_exists(_tokenId), "Token does not exist");
+        require(ownerOf(_tokenId) == _from, "Token does not belong to the specified address");
+        _transfer(_from, _to, _tokenId);
+    }
+
+    function getTokenURI(uint256 _tokenId) public view returns (string memory) {
+        require(_exists(_tokenId), "Token does not exist");
+        return tokenData[_tokenId].uri;
     }
 
     function generateTokenId(string calldata _vin) internal pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(_vin)));
     }
 
-    function addMaintenance(string calldata _maintenance, string calldata _vin) external onlyDistributors {
+    function addMaintenance(string calldata _maintenance, string calldata _vin) external onlyDistributor {
         uint256 _idToken = generateTokenId(_vin);
-        //require(_exists(_idToken), "Token does not exist");
+        require(_exists(_idToken), "Token does not exist");
         Maintenances[_idToken].push(Maintenance(_maintenance, block.timestamp));
         // Credit 100 tokens to the cagnotte for each maintenance
         cagnotteToken.addCagnotte(ownerOf(_idToken), 100);
@@ -102,53 +126,32 @@ contract CarMaintenanceBook is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
 
     function getMaintenanceHistory(string calldata _vin) external view returns (Maintenance[] memory) {
         uint256 _idToken = generateTokenId(_vin);
-        //require(_exists(_idToken), "Token does not exist");
+        require(_exists(_idToken), "Token does not exist");
         return Maintenances[_idToken];
     }
 
     function getLengthMaintenanceHistory(string calldata _vin) external view returns (uint) {
         uint256 _idToken = generateTokenId(_vin);
-        //require(_exists(_idToken), "Token does not exist");
+        require(_exists(_idToken), "Token does not exist");
         return Maintenances[_idToken].length;
     }
 
     function gethMaintenanceHistoryById(string calldata _vin, uint _idMaintenance) external view returns (Maintenance memory) {
         uint256 _idToken = generateTokenId(_vin);
-        //require(_exists(_idToken), "Token does not exist");
+        require(_exists(_idToken), "Token does not exist");
         return Maintenances[_idToken][_idMaintenance];
     }
 
-    // The following functions are overrides required by Solidity.
-    function _update(address to, uint256 tokenId, address auth)
-        internal
-        override(ERC721, ERC721Enumerable)
-        returns (address)
-    {
-        return super._update(to, tokenId, auth);
+    //Override function ERC721
+    function transferFrom(address from, address to, uint256 tokenId) public override(ERC721) IsTransferAllowed(tokenId) {
+        super.transferFrom(from, to, tokenId);
     }
 
-    function _increaseBalance(address account, uint128 value)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
-        super._increaseBalance(account, value);
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public override(ERC721) IsTransferAllowed(tokenId) {
+        super.safeTransferFrom(from, to, tokenId, _data);
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721Enumerable, ERC721URIStorage)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
