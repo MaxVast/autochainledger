@@ -53,7 +53,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
         _;
     }
 
-    constructor(address _cagnotteToken) ERC721("Pass Maintenance Auto", "pass-auto") Ownable(msg.sender) {
+    constructor(address _cagnotteToken) ERC721("AutoChain Ledger", "ACL") Ownable(msg.sender) {
         cagnotteToken = CarMaintenanceLoyalty(_cagnotteToken);
     }
 
