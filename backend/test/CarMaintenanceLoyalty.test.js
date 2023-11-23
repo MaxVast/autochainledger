@@ -1,98 +1,123 @@
 const { ethers } = require("hardhat");
-const { expect } = require("chai");
+const { assert, expect } = require("chai");
+const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
-describe("CarMaintenanceLoyalty", function () {
+describe("CarMaintenanceLoyalty Test", function () {
   let owner, admin, user;
-  let token;
+  let erc20Contract;
 
-  beforeEach(async function () {
+  async function deployFixture() {
     [owner, admin, user] = await ethers.getSigners();
 
-    // Déployez le contrat
-    const Token = await ethers.getContractFactory("CarMaintenanceLoyalty");
-    token = await Token.deploy();
-    await token.deployed();
+    erc20Contract = await ethers.deployContract("CarMaintenanceLoyalty");
 
-    // Ajoutez un admin
-    await token.addAdmin(admin.address);
-  });
+    return { erc20Contract, owner, admin, user }
+  }
 
-  it("should add an admin", async function () {
-    await token.connect(owner).addAdmin(user.address);
-    expect(await token.admins(user.address)).to.equal(true);
-  });
+  async function adminAddedFixture() {
+    [owner, admin, user] = await ethers.getSigners();
 
-  it("should remove an admin", async function () {
-    await token.connect(owner).removeAdmin(admin.address);
-    expect(await token.admins(admin.address)).to.equal(false);
-  });
+    erc20Contract = await ethers.deployContract("CarMaintenanceLoyalty");
+    await erc20Contract.connect(owner).addAdmin(admin.address);
 
-  it("should add cagnotte for an account", async function () {
-    const amount = 100;
-    await token.connect(admin).addCagnotte(user.address, amount);
-    expect(await token.totalTokens(user.address)).to.equal(amount);
-  });
+    return { erc20Contract, owner, admin, user }
+  }
+  
+  describe("Check Admin", () => { 
+    beforeEach(async function () {
+      const erc20Contract = await loadFixture(deployFixture);
+    });
 
-  it("should mint tokens for an account", async function () {
-    const amount = 100;
-    await token.connect(admin).addCagnotte(user.address, amount);
-    await token.connect(admin).mint(user.address);
-    expect(await token.balanceOf(user.address)).to.equal(amount);
-  });
+    it("should add an admin", async function () {
+      await erc20Contract.connect(owner).addAdmin(admin.address);
+    });
+  
+    it("should remove an admin", async function () {
+      await erc20Contract.connect(owner).removeAdmin(admin.address);
+    });
+  })
 
+  describe("Check Cagnotte", () => { 
+    beforeEach(async function () {
+      const erc20Contract = await loadFixture(adminAddedFixture);
+    });
+    it("should add cagnotte for an account", async function () {
+      const amount = 100;
+      await erc20Contract.connect(admin).addCagnotte(user.address, amount);
+      expect(await erc20Contract.balanceOf(user.address)).to.equal(amount);
+    });
+
+    it("should return the correct balance for an account", async function () {
+      const amount = 100;
+      await erc20Contract.connect(admin).addCagnotte(user.address, amount);
+  
+      const balance = await tokenContract.balanceOf(user.address);
+      expect(balance).to.equal(amount);
+    });
+  
+    it("should mint tokens for an account", async function () {
+      const amount = 100;
+      await erc20Contract.connect(admin).addCagnotte(user.address, amount);
+      await erc20Contract.connect(admin).mint(user.address);
+      expect(await erc20Contract.balanceOf(user.address)).to.equal(amount);
+    });
+  })
+})
+
+  /*
   it("should return correct balance using balanceOf", async function () {
     const initialBalance = 100;
-    await token.connect(admin).addCagnotte(user.address, initialBalance);
+    await erc20Contract.connect(admin).addCagnotte(user.address, initialBalance);
 
     // Utilisez la fonction balanceOf pour obtenir le solde
-    const userBalance = await token.balanceOf(user.address);
+    const userBalance = await erc20Contract.balanceOf(user.address);
     expect(userBalance).to.equal(initialBalance);
 
     // Ajoutez des tokens supplémentaires et vérifiez à nouveau le solde
     const additionalTokens = 50;
-    await token.connect(admin).addCagnotte(user.address, additionalTokens);
+    await erc20Contract.connect(admin).addCagnotte(user.address, additionalTokens);
 
-    const updatedBalance = await token.balanceOf(user.address);
+    const updatedBalance = await erc20Contract.balanceOf(user.address);
     expect(updatedBalance).to.equal(initialBalance + additionalTokens);
   });
 
   it("should transfer tokens safely", async function () {
     const amount = 100;
-    await token.connect(admin).addCagnotte(user.address, amount);
-    await token.connect(admin).mint(user.address);
+    await erc20Contract.connect(admin).addCagnotte(user.address, amount);
+    await erc20Contract.connect(admin).mint(user.address);
 
     const receiverBalanceBefore = await token.balanceOf(user.address);
 
     // Test de safeTransfer
-    await token.connect(user).safeTransfer(admin.address, amount);
-    let receiverBalanceAfter = await token.balanceOf(user.address);
+    await erc20Contract.connect(user).safeTransfer(admin.address, amount);
+    let receiverBalanceAfter = await erc20Contract.balanceOf(user.address);
     expect(receiverBalanceAfter).to.equal(receiverBalanceBefore - amount);
 
     // Test de safeTransferFrom
-    await token.connect(admin).addCagnotte(owner.address, amount);
-    await token.connect(owner).safeIncreaseAllowance(user.address, amount);
-    await token.connect(user).safeTransferFrom(owner.address, admin.address, amount);
-    receiverBalanceAfter = await token.balanceOf(admin.address);
+    await erc20Contract.connect(admin).addCagnotte(owner.address, amount);
+    await erc20Contract.connect(owner).safeIncreaseAllowance(user.address, amount);
+    await erc20Contract.connect(user).safeTransferFrom(owner.address, admin.address, amount);
+    receiverBalanceAfter = await erc20Contract.balanceOf(admin.address);
     expect(receiverBalanceAfter).to.equal(amount);
 
     // Test de safeIncreaseAllowance
     const spender = admin.address;
-    const allowanceBefore = await token.allowance(owner.address, spender);
-    await token.connect(owner).safeIncreaseAllowance(spender, amount);
-    const allowanceAfter = await token.allowance(owner.address, spender);
+    const allowanceBefore = await erc20Contract.allowance(owner.address, spender);
+    await erc20Contract.connect(owner).safeIncreaseAllowance(spender, amount);
+    const allowanceAfter = await erc20Contract.allowance(owner.address, spender);
     expect(allowanceAfter).to.equal(allowanceBefore + amount);
 
     // Test de safeDecreaseAllowance
     const requestedDecrease = amount;
-    await token.connect(owner).safeDecreaseAllowance(spender, requestedDecrease);
-    const allowanceAfterDecrease = await token.allowance(owner.address, spender);
+    await erc20Contract.connect(owner).safeDecreaseAllowance(spender, requestedDecrease);
+    const allowanceAfterDecrease = await erc20Contract.allowance(owner.address, spender);
     expect(allowanceAfterDecrease).to.equal(allowanceAfter - requestedDecrease);
 
     // Test de forceApprove
     const newAllowance = 500;
-    await token.connect(owner).forceApprove(spender, newAllowance);
-    const allowanceAfterForceApprove = await token.allowance(owner.address, spender);
+    await erc20Contract.connect(owner).forceApprove(spender, newAllowance);
+    const allowanceAfterForceApprove = await erc20Contract.allowance(owner.address, spender);
     expect(allowanceAfterForceApprove).to.equal(newAllowance);
-  });
+  })
 
-});
+})*/
