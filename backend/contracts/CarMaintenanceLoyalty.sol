@@ -23,7 +23,7 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
         _;
     }
     
-    constructor(string memory name_, string memory symbol_) ERC20(name_, symbol_) Ownable(msg.sender) {
+    constructor() ERC20("AutoChain Ledger Token", "ACLT") Ownable(msg.sender) {
         _name = name_;
         _symbol = symbol_;
         _decimals = 18;
