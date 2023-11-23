@@ -12,22 +12,13 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     mapping(address => uint256) totalTokens;
     mapping(address => bool) admins;
 
-    string _name;
-    string _symbol;
-    uint256 _totalSupply;
-    uint8 _decimals;
-
     // Modifier to restrict access to only registered voters
     modifier onlyAdmins() {
         require(admins[msg.sender], "You are not a admins");
         _;
     }
     
-    constructor() ERC20("AutoChain Ledger Token", "ACLT") Ownable(msg.sender) {
-        _name = name_;
-        _symbol = symbol_;
-        _decimals = 18;
-    }
+    constructor() ERC20("AutoChain Ledger Token", "ACLT") Ownable(msg.sender) {}
 
     function addAdmin(address _admin) external onlyOwner {
         admins[_admin] = true;
