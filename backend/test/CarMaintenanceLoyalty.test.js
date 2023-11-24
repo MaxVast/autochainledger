@@ -50,9 +50,9 @@ describe("CarMaintenanceLoyalty Test", function () {
     it("should return the correct balance for an account", async function () {
       const amount = 100;
       await erc20Contract.connect(admin).addCagnotte(user.address, amount);
-  
-      const balance = await tokenContract.balanceOf(user.address);
-      expect(balance).to.equal(amount);
+      
+      const balance = await erc20Contract.balanceOf(user.address);
+      assert.equal(balance, amount);
     });
   
     it("should mint tokens for an account", async function () {
