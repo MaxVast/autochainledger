@@ -106,6 +106,10 @@ describe("CarMaintenanceLoyalty Test", function () {
   })
 
   describe("Check Transfer SafeErc20", () => { 
+    beforeEach(async function () {
+      const erc20Contract = await loadFixture(adminAddedFixture);
+    });
+    
     it("devrait transférer des fonds en toute sécurité", async function () {
       const initialBalance = await erc20Contract.balanceOf(user.address);
       const amount = 100;
