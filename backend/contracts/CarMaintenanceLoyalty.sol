@@ -12,6 +12,11 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     mapping(address => uint256) totalTokens;
     mapping(address => bool) admins;
 
+    event AdminAdded(address indexed _admin);
+    event AdminRemoved(address indexed _admin);
+    event CreditedPrizePool(address indexed _account, uint256 _amount);
+    event PrizePoolDelivered(address indexed _account);
+
     // Modifier to restrict access to only registered voters
     modifier onlyAdmins() {
         require(admins[msg.sender], "You are not a admins");
@@ -22,18 +27,25 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
 
     function addAdmin(address _admin) external onlyOwner {
         admins[_admin] = true;
+        emit AdminAdded(_admin);
     }
 
     function removeAdmin(address _admin) external onlyOwner {
         admins[_admin] = false;
+        emit AdminRemoved(_admin);
     }
 
     function addCagnotte(address _account, uint256 _amount) external onlyAdmins {
         totalTokens[_account] += _amount;
+        emit CreditedPrizePool(_account, _amount);
     }
 
     function mint(address _account) external onlyAdmins {
-        _mint(_account, totalTokens[_account]);
+        require(balanceOf(_account) > 0, "Account balance is insufficient for minting");
+        uint256 totalCagnotte = balanceOf(_account);
+        totalTokens[_account] = 0;
+        _mint(_account, totalCagnotte);
+        emit PrizePoolDelivered(_account);
     }
 
     function balanceOf(address _account) public view override returns (uint256) {
