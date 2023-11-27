@@ -27,7 +27,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     // Mapping from Token ID to tokenData
     mapping(uint256 => TokenData) private tokenData;
     // Mapping from address to claim token
-    mapping(address => bool) claimedTokens;
+    mapping(uint256 => bool) claimedTokens;
     // Mapping from Token ID to address
     mapping(uint256 => address) public balance;
     // Mapping to store distributor
@@ -69,16 +69,16 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     }
 
     /// @notice Allows you to claim an SBT and send it to the address
-    function safeMint(address _to, uint256 _tokenId, string calldata _uri) public onlyDistributor {
-        require(!claimedTokens[_to], "Token already claimed");
-        tokenData[_tokenId].uri = _uri;
-        tokenData[_tokenId].locked = true;
-        _safeMint(_to, _tokenId);
+    function safeMint(address _to, uint256 _idToken, string calldata _uri) public onlyDistributor {
+        require(!claimedTokens[_idToken], "Token already claimed");
+        tokenData[_idToken].uri = _uri;
+        tokenData[_idToken].locked = true;
+        _safeMint(_to, _idToken);
         // Marks token as claimed
-        claimedTokens[_to] = true;
+        claimedTokens[_idToken] = true;
         
         cagnotteToken.addCagnotte(_to, 1000);
-        emit TokenClaimed(_to, _tokenId);
+        emit TokenClaimed(_to, _idToken);
     }
 
     /// @notice Returns the locking status of an Soulbound Token
@@ -114,7 +114,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
         return tokenData[_tokenId].uri;
     }
 
-    function generateTokenId(string calldata _vin) internal pure returns (uint256) {
+    function generateTokenId(string calldata _vin) public pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(_vin)));
     }
 
