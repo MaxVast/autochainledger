@@ -70,26 +70,16 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
 
     /// @notice Allows you to claim an SBT and send it to the address
     function safeMint(address _to, uint256 _tokenId, string calldata _uri) public onlyDistributor {
-        require(ownerOf(_tokenId) != address(0), "Token already claimed");
-        _safeMint(_to, _tokenId);
+        require(!claimedTokens[_to], "Token already claimed");
         tokenData[_tokenId].uri = _uri;
         tokenData[_tokenId].locked = true;
-
+        _safeMint(_to, _tokenId);
+        // Marks token as claimed
+        claimedTokens[_to] = true;
+        
         cagnotteToken.addCagnotte(_to, 1000);
         emit TokenClaimed(_to, _tokenId);
     }
-
-    /*/// @notice Allow listing all addresses of NFT owners
-    function getAllOwners() external view returns (address[] memory) {
-        uint256 totalSupply = totalSupply();
-        address[] memory owners = new address[](totalSupply);
-
-        for (uint256 i = 0; i < totalSupply; i++) {
-            owners[i] = ownerOf(tokenByIndex(i));
-        }
-
-        return owners;
-    }*/
 
     /// @notice Returns the locking status of an Soulbound Token
     /// @dev SBTs assigned to zero address are considered invalid, and queries

@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 contract CarMaintenanceLoyalty is ERC20, Ownable {
     using SafeERC20 for IERC20;
 
-    mapping(address => uint256) totalTokens;
+    mapping(address => uint256) public totalTokens;
     mapping(address => bool) admins;
 
     event AdminAdded(address indexed _admin);
@@ -41,15 +41,11 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     }
 
     function mint(address _account) external onlyAdmins {
-        require(balanceOf(_account) > 0, "Account balance is insufficient for minting");
-        uint256 totalCagnotte = balanceOf(_account);
+        require(totalTokens[_account] > 0, "Account balance is insufficient for minting");
+        uint256 totalCagnotte = totalTokens[_account];
         totalTokens[_account] = 0;
         _mint(_account, totalCagnotte);
         emit PrizePoolDelivered(_account);
-    }
-
-    function balanceOf(address _account) public view override returns (uint256) {
-        return totalTokens[_account];
     }
 
     function safeTransfer(address to, uint256 value) public {

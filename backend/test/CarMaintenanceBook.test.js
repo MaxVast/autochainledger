@@ -16,7 +16,23 @@ describe("CarMaintenanceBook Test", function () {
         const MaintenanceContract = await ethers.getContractFactory("CarMaintenanceBook");
         maintenanceContract = await MaintenanceContract.deploy(erc20Contract.target);
 
-        return { maintenanceContract, owner, distributor, user, user2 }
+        return { maintenanceContract, erc20Contract, owner, distributor, user, user2 }
+    }
+
+    async function distributorAddedFixture() {
+        [owner, distributor, user, user2] = await ethers.getSigners();
+
+        const Erc20Contract = await ethers.getContractFactory("CarMaintenanceLoyalty");
+        erc20Contract = await Erc20Contract.deploy();
+
+        const MaintenanceContract = await ethers.getContractFactory("CarMaintenanceBook");
+        maintenanceContract = await MaintenanceContract.deploy(erc20Contract.target);
+
+        await erc20Contract.connect(owner).addAdmin(maintenanceContract.target)
+
+        await maintenanceContract.connect(owner).setDistributor(distributor.address)
+
+        return { maintenanceContract, erc20Contract, owner, distributor, user, user2 }
     }
 
     describe("Check Distributor", () => {
@@ -35,6 +51,37 @@ describe("CarMaintenanceBook Test", function () {
             await expect(maintenanceContract.connect(owner).setDistributor(distributor.address))
                 .to.be.rejectedWith(maintenanceContract, "Distributor is already registered");
         });
-
     })
+
+    describe("Check mint", () => {
+        beforeEach(async function () {
+            const maintenanceContract = await loadFixture(distributorAddedFixture);
+        });
+
+
+        it("should mint a token and update cagnotte", async function () {
+            const tokenId = 1;
+            const uri = "ipfs://QmHash123";
+
+            // Mint a token
+            await maintenanceContract.connect(distributor).safeMint(user.address, tokenId, uri);
+
+            // Check if the token exists
+            const tokenExists = await maintenanceContract.ownerOf(tokenId);
+
+            // Check token properties
+            const lockedStatus = await maintenanceContract.locked(tokenId);
+            const tokenURI = await maintenanceContract.getTokenURI(tokenId);
+
+            // Check cagnotte balance
+            const cagnotteBalance = await erc20Contract.totalTokens(user.address);
+
+            // Assertions
+            expect(tokenExists).to.equal(user.address);
+            expect(lockedStatus).to.equal(true);
+            expect(tokenURI).to.equal(uri);
+            expect(cagnotteBalance).to.equal(1000);
+        });
+    })
+
 })

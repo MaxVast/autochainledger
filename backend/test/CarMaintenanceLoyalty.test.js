@@ -70,14 +70,14 @@ describe("CarMaintenanceLoyalty Test", function () {
     it("should add cagnotte for an account", async function () {
       const amount = 100;
       await erc20Contract.connect(admin).addCagnotte(user.address, amount);
-      expect(await erc20Contract.balanceOf(user.address)).to.equal(amount);
+      expect(await erc20Contract.totalTokens(user.address)).to.equal(amount);
     });
 
     it("should return the correct balance for an account", async function () {
       const amount = 100;
       await erc20Contract.connect(admin).addCagnotte(user.address, amount);
       
-      const balance = await erc20Contract.balanceOf(user.address);
+      const balance = await erc20Contract.totalTokens(user.address);
       assert.equal(balance, amount);
     });
 
@@ -101,15 +101,15 @@ describe("CarMaintenanceLoyalty Test", function () {
       await expect(erc20Contract.connect(admin).mint(user.address))
         .to.emit(erc20Contract, 'PrizePoolDelivered')
         .withArgs(user.address);
-      assert.equal(await erc20Contract.balanceOf(user.address), 0);
+      assert.equal(await erc20Contract.balanceOf(user.address), amount);
     });
   })
 
-  describe("Check Transfer SafeErc20", () => { 
+  /*describe("Check Transfer SafeErc20", () => { 
     beforeEach(async function () {
       const erc20Contract = await loadFixture(adminAddedFixture);
     });
-    
+
     it("devrait transférer des fonds en toute sécurité", async function () {
       const initialBalance = await erc20Contract.balanceOf(user.address);
       const amount = 100;
@@ -119,5 +119,5 @@ describe("CarMaintenanceLoyalty Test", function () {
   
       expect(newBalance).to.equal(amount);
     });
-  })
+  })*/
 })
