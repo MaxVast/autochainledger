@@ -44,7 +44,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     event DistributorRegistered(address indexed DistributorAddress);
 
     modifier onlyDistributor() {
-        require(msg.sender == owner() || distributors[msg.sender], "Not a distributor");
+        require(distributors[msg.sender], "Not a distributor");
         _;
     }
 
@@ -60,6 +60,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
 
     constructor(address _cagnotteToken) ERC721("AutoChain Ledger", "ACL") Ownable(msg.sender) {
         cagnotteToken = CarMaintenanceLoyalty(_cagnotteToken);
+        distributors[msg.sender] = true;
     }
 
     function setDistributor(address _distributor) external onlyOwner {
