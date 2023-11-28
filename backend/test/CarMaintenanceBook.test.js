@@ -36,7 +36,12 @@ describe("CarMaintenanceBook Test", function () {
 
         await maintenanceContract.connect(owner).setDistributor(distributor.address)
 
-        return { maintenanceContract, erc20Contract, owner, distributor, user, user2 }
+        tokenId = "VIN124858TEST";
+        hash = await maintenanceContract.generateTokenId(tokenId)
+        uri = "ipfs://QmHash123/"+hash+".json";
+        maintenance = "Vidange";
+
+        return { maintenanceContract, erc20Contract, owner, distributor, user, user2, tokenId, hash, uri, maintenance }
     }
 
     async function NftMintAndMaintenanceAddedFixture() {
@@ -118,17 +123,11 @@ describe("CarMaintenanceBook Test", function () {
         });
 
         it("should not mint a token if you are not distributor", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId)
-            const uri = "ipfs://QmHash123/"+hash+".json";
             await expect(maintenanceContract.connect(user).safeMint(user.address, hash, uri))
                 .to.be.rejectedWith(maintenanceContract, "Not a distributor");
         });
 
         it("should mint a token and update cagnotte", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId)
-            const uri = "ipfs://QmHash123/"+hash+".json";
             // Mint a token
             await expect(maintenanceContract.connect(distributor).safeMint(user.address, hash, uri))
                 .to.emit(maintenanceContract, 'TokenClaimed')
@@ -148,80 +147,56 @@ describe("CarMaintenanceBook Test", function () {
         });
 
         it("should not get token URI if the token doesnt exists", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId)
-
             await expect(maintenanceContract.connect(user).getTokenURI(hash))
                 .to.be.rejectedWith(maintenanceContract, "Token not exists");
         });
 
         it("should not get value lock token if the token doesnt exists", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId)
-
             await expect(maintenanceContract.connect(user).locked(hash))
                 .to.be.rejectedWith(maintenanceContract, "Token not exists");
         });
 
         it("should not unlock token if you are not distributor", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId)
-            const uri = "ipfs://QmHash123/"+hash+".json";
-
             await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
             await expect(maintenanceContract.connect(user).unlockToken(hash))
                 .to.be.rejectedWith(maintenanceContract, "Not a distributor");
         });
 
-        it("should not unlock token if the token doesnt exists", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId)
+        it("should unlock token ", async function () {
+            await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
+            await expect(maintenanceContract.connect(distributor).unlockToken(hash))
+                .to.emit(maintenanceContract, 'Unlocked')
+                .withArgs(hash);
+        });
 
+        it("should not unlock token if the token doesnt exists", async function () {
             await expect(maintenanceContract.connect(distributor).unlockToken(hash))
                 .to.be.rejectedWith(maintenanceContract, "Token not exists");
         });
 
         it("should not mint a token if is already exists", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId)
-            const uri = "ipfs://QmHash123/"+hash+".json";
-
             await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
             await expect(maintenanceContract.connect(distributor).safeMint(user.address, hash, uri))
                 .to.be.rejectedWith(maintenanceContract, "Token already claimed");
         });
 
         it("should not add an maintenance and update cagnotte if you are not distributor", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId);
-            const uri = "ipfs://QmHash123/"+hash+".json";
-            const maintenance = "Vidange";
             await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
             await expect(maintenanceContract.connect(user).addMaintenance(hash, maintenance))
                 .to.be.rejectedWith(maintenanceContract, "Not a distributor");
         });
 
         it("should not add an maintenance and update cagnotte if the token doesnt exists", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId);
-            const maintenance = "Vidange";
             await expect(maintenanceContract.connect(distributor).addMaintenance(hash, maintenance))
                 .to.be.rejectedWith(maintenanceContract, "Token not exists");
         });
 
         it("should add an maintenance and update cagnotte", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId);
-            const uri = "ipfs://QmHash123/"+hash+".json";
-            const maintenance = "Vidange"
-
             await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
             await maintenanceContract.connect(distributor).addMaintenance(hash, maintenance);
             const cagnotteBalance = await erc20Contract.totalTokens(user.address);
             assert.equal(cagnotteBalance,1100);
         });
-
-
     })
 
     describe("Check Maintenance", () => {
@@ -229,9 +204,108 @@ describe("CarMaintenanceBook Test", function () {
             const maintenanceContract = await loadFixture(NftMintAndMaintenanceAddedFixture);
         });
 
+        it("should not get maintenance history if the token doesnt exists", async function () {
+            await expect(maintenanceContract.connect(user).getMaintenanceHistory(18722984123))
+                .to.be.rejectedWith(maintenanceContract, "Token not exists")
+        });
+
         it("should get maintenance history", async function () {
             const result = await maintenanceContract.connect(user).getMaintenanceHistory(hash)
             assert.equal(Array.isArray(result), true)
+        });
+
+        it("should not get number maintenance if the token doesnt exists", async function () {
+            await expect(maintenanceContract.connect(user).getLengthMaintenanceHistory(18722984123))
+                .to.be.rejectedWith(maintenanceContract, "Token not exists")
+        });
+
+        it("should get number maintenance", async function () {
+            const result = await maintenanceContract.connect(user).getLengthMaintenanceHistory(hash)
+            expect(result).to.be.greaterThan(0);
+        });
+
+        it("should not get an maintenance if the token doesnt exists", async function () {
+            await expect(maintenanceContract.connect(user).gethMaintenanceHistoryById(18722984123,0 ))
+                .to.be.rejectedWith(maintenanceContract, "Token not exists")
+        });
+
+        it("should get an maintenance", async function () {
+            const result = await maintenanceContract.connect(user).gethMaintenanceHistoryById(hash, 0)
+            assert.equal(Array.isArray(result), true)
+        });
+    })
+
+    describe("Check transfer Token", () => {
+        beforeEach(async function () {
+            const maintenanceContract = await loadFixture(NftMintAndMaintenanceAddedFixture);
+        });
+
+        it("should not reclaim token if you are not an distributor", async function () {
+            await expect(maintenanceContract.connect(user2).reclaimToken(user.address, hash))
+                .to.be.rejectedWith(maintenanceContract, "Not a distributor");
+        });
+
+        it("should not reclaim token if the token not belong at user", async function () {
+            await expect(maintenanceContract.connect(distributor).reclaimToken(user2.address, hash))
+                .to.be.rejectedWith(maintenanceContract, "Token does not belong to the specified address");
+        });
+
+        it("should not reclaim token if the token doesnt exists", async function () {
+            await expect(maintenanceContract.connect(distributor).reclaimToken(user.address, 18722984123))
+                .to.be.rejectedWith(maintenanceContract, "Token not exists");
+        });
+
+        it("should reclaim token", async function () {
+            await maintenanceContract.connect(distributor).reclaimToken(user.address, hash)
+            assert.equal(await maintenanceContract.locked(hash), false)
+        });
+
+        it("should not reclaim token if you are not an distributor", async function () {
+            await expect(maintenanceContract.connect(user2).transferTokenNew(user.address, user2.address, hash))
+                .to.be.rejectedWith(maintenanceContract, "Not a distributor");
+        });
+
+        it("should not reclaim token if the token not belong at user", async function () {
+            await expect(maintenanceContract.connect(distributor).transferTokenNew(user2.address, user.address, hash))
+                .to.be.rejectedWith(maintenanceContract, "Token does not belong to the specified address");
+        });
+
+        it("should not reclaim token if the token doesnt exists", async function () {
+            await expect(maintenanceContract.connect(distributor).transferTokenNew(user.address, user2.address, 18722984123))
+                .to.be.rejectedWith(maintenanceContract, "Token not exists");
+        });
+
+        it("should transfer token at new address", async function () {
+            await maintenanceContract.connect(distributor).transferTokenNew(user.address, user2.address, hash)
+            assert.equal(await maintenanceContract.ownerOf(hash), user2.address)
+        });
+
+        it("should not transferFrom token if is Lock", async function () {
+            await expect(maintenanceContract.connect(distributor).transferFrom(user.address, user2.address, hash))
+                .to.be.rejectedWith(maintenanceContract, "Token is locked");
+        });
+
+        it("should transferFrom token at new address", async function () {
+            await maintenanceContract.connect(distributor).unlockToken(hash)
+            await maintenanceContract.connect(user).approve(user2.address, hash)
+            await expect(maintenanceContract.connect(user).transferFrom(user.address, user2.address, hash))
+                .to.emit(maintenanceContract, "Transfer")
+                .withArgs(user.address, user2.address, hash);
+            assert.equal(await maintenanceContract.ownerOf(hash), user2.address)
+        });
+
+        it("should not safeTransferFrom token if is Lock", async function () {
+            await expect(maintenanceContract.connect(distributor).safeTransferFrom(user.address, user2.address, hash))
+                .to.be.rejectedWith(maintenanceContract, "Token is locked");
+        });
+
+        it("should safeTransferFrom token at new address", async function () {
+            await maintenanceContract.connect(distributor).unlockToken(hash)
+            await maintenanceContract.connect(user).approve(user2.address, hash)
+            await expect(maintenanceContract.connect(user).safeTransferFrom(user.address, user2.address, hash))
+                .to.emit(maintenanceContract, "Transfer")
+                .withArgs(user.address, user2.address, hash);
+            assert.equal(await maintenanceContract.ownerOf(hash), user2.address)
         });
     })
 })
