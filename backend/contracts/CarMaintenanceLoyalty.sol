@@ -27,12 +27,12 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     
     constructor() ERC20("AutoChain Ledger Token", "ACLT") Ownable(msg.sender) {}
 
-    function addAdmin(address _admin) external onlyOwner {
+    function addAdmins(address _admin) external onlyOwner {
         admins[_admin] = true;
         emit AdminAdded(_admin);
     }
 
-    function removeAdmin(address _admin) external onlyOwner {
+    function removeAdmins(address _admin) external onlyOwner {
         admins[_admin] = false;
         emit AdminRemoved(_admin);
     }
