@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-// ERC20 Token contract
+/// @title A contract for a Token loyalty to maintenance vehicle
+/// @author MaxVast
+/// @dev Implementation Openzeppelin Ownable, ERC20 and SafeERC20
 contract CarMaintenanceLoyalty is ERC20, Ownable {
     using SafeERC20 for IERC20;
 
@@ -48,7 +50,7 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
         emit PrizePoolDelivered(_account);
     }
 
-    function safeTransfer(address to, uint256 value) public {
+    /*function safeTransfer(address to, uint256 value) public {
         IERC20(address(this)).safeTransfer(to, value);
     }
 
@@ -66,5 +68,5 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
 
     function forceApprove(address spender, uint256 value) public {
         IERC20(address(this)).forceApprove(spender, value);
-    }
+    }*/
 }
