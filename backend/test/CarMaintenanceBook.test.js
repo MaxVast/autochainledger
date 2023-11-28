@@ -6,6 +6,10 @@ describe("CarMaintenanceBook Test", function () {
     let owner, distributor, user, user2;
     let erc20Contract;
     let maintenanceContract;
+    let tokenId;
+    let hash;
+    let uri;
+    let maintenance;
 
     async function deployFixture() {
         [owner, distributor, user, user2] = await ethers.getSigners();
@@ -33,6 +37,30 @@ describe("CarMaintenanceBook Test", function () {
         await maintenanceContract.connect(owner).setDistributor(distributor.address)
 
         return { maintenanceContract, erc20Contract, owner, distributor, user, user2 }
+    }
+
+    async function NftMintAndMaintenanceAddedFixture() {
+        [owner, distributor, user, user2] = await ethers.getSigners();
+
+        const Erc20Contract = await ethers.getContractFactory("CarMaintenanceLoyalty");
+        erc20Contract = await Erc20Contract.deploy();
+
+        const MaintenanceContract = await ethers.getContractFactory("CarMaintenanceBook");
+        maintenanceContract = await MaintenanceContract.deploy(erc20Contract.target);
+
+        await erc20Contract.connect(owner).addAdmin(maintenanceContract.target)
+
+        await maintenanceContract.connect(owner).setDistributor(distributor.address)
+
+        tokenId = "VIN124858TEST";
+        hash = await maintenanceContract.generateTokenId(tokenId)
+        uri = "ipfs://QmHash123/"+hash+".json";
+        maintenance = "Vidange";
+
+        await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
+        await maintenanceContract.connect(distributor).addMaintenance(hash, maintenance);
+
+        return { maintenanceContract, erc20Contract, owner, distributor, user, user2, tokenId, hash, uri, maintenance }
     }
 
     describe("Check Distributor", () => {
@@ -162,19 +190,17 @@ describe("CarMaintenanceBook Test", function () {
             assert.equal(cagnotteBalance,1100);
         });
 
-        it("should get maintenance history", async function () {
-            const tokenId = "VIN124858TEST";
-            const hash = await maintenanceContract.generateTokenId(tokenId);
-            const uri = "ipfs://QmHash123/"+hash+".json";
-            const maintenance = "Vidange"
 
-            await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
-            await maintenanceContract.connect(distributor).addMaintenance(hash, maintenance);
-            const result = await maintenanceContract.connect(user).getMaintenanceHistory(hash)
+    })
 
-            assert.equal(Array.isArray(result), true)
+    describe("Check Maintenance", () => {
+        beforeEach(async function () {
+            const maintenanceContract = await loadFixture(NftMintAndMaintenanceAddedFixture);
         });
 
-
+        it("should get maintenance history", async function () {
+            const result = await maintenanceContract.connect(user).getMaintenanceHistory(hash)
+            assert.equal(Array.isArray(result), true)
+        });
     })
 })
