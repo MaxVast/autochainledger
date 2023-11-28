@@ -23,11 +23,21 @@ describe("CarMaintenanceLoyalty Test", function () {
     erc20Contract = await Erc20Contract.deploy();
     const MaintenanceContract = await ethers.getContractFactory("CarMaintenanceBook");
     maintenanceContract = await MaintenanceContract.deploy(erc20Contract.target);
-    await erc20Contract.connect(owner).addAdmin(maintenanceContract.target);
-    await erc20Contract.connect(owner).addAdmin(admin.address);
+    await erc20Contract.connect(owner).addAdmins(maintenanceContract.target);
+    await erc20Contract.connect(owner).addAdmins(admin.address);
 
     return { erc20Contract, owner, admin, user }
   }
+
+  describe("Check Deploy Smart Contract", () => {
+    beforeEach(async function () {
+      const maintenanceContract = await loadFixture(deployFixture);
+    });
+
+    it("Check owner Smart Contract", async function () {
+      assert.equal(await erc20Contract.owner(), owner.address)
+    });
+  })
   
   describe("Check Admin", () => { 
     beforeEach(async function () {
@@ -35,27 +45,27 @@ describe("CarMaintenanceLoyalty Test", function () {
     });
 
     it("should not add an admin if it's not owner", async function () {
-      await expect(erc20Contract.connect(user).addAdmin(admin.address))
+      await expect(erc20Contract.connect(user).addAdmins(admin.address))
         .to.be.revertedWithCustomError(erc20Contract, "OwnableUnauthorizedAccount")
         .withArgs(user.address);
     });
 
     it("should add an admin", async function () {
-      await expect(erc20Contract.connect(owner).addAdmin(admin.address))
+      await expect(erc20Contract.addAdmins(admin.address))
         .to.emit(erc20Contract, 'AdminAdded')
         .withArgs(admin.address);
     });
 
     it("should not remove an admin if it's not owner", async function () {
-      await erc20Contract.connect(owner).addAdmin(admin.address);
-      await expect(erc20Contract.connect(user).removeAdmin(admin.address))
+      await erc20Contract.addAdmins(admin.address);
+      await expect(erc20Contract.connect(user).removeAdmins(admin.address))
         .to.be.revertedWithCustomError(erc20Contract, "OwnableUnauthorizedAccount")
         .withArgs(user.address);
     });
   
     it("should remove an admin", async function () {
-      await erc20Contract.connect(owner).addAdmin(admin.address);
-      await expect(erc20Contract.connect(owner).removeAdmin(admin.address))
+      await erc20Contract.addAdmins(admin.address);
+      await expect(erc20Contract.removeAdmins(admin.address))
         .to.emit(erc20Contract, 'AdminRemoved')
         .withArgs(admin.address);
     });
