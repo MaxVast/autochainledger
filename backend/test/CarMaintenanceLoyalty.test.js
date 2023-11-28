@@ -4,6 +4,7 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("CarMaintenanceLoyalty Test", function () {
   let owner, admin, user;
+  let maintenanceContract;
   let erc20Contract;
 
   async function deployFixture() {
@@ -20,6 +21,9 @@ describe("CarMaintenanceLoyalty Test", function () {
 
     const Erc20Contract = await ethers.getContractFactory("CarMaintenanceLoyalty");
     erc20Contract = await Erc20Contract.deploy();
+    const MaintenanceContract = await ethers.getContractFactory("CarMaintenanceBook");
+    maintenanceContract = await MaintenanceContract.deploy(erc20Contract.target);
+    await erc20Contract.connect(owner).addAdmin(maintenanceContract.target);
     await erc20Contract.connect(owner).addAdmin(admin.address);
 
     return { erc20Contract, owner, admin, user }
