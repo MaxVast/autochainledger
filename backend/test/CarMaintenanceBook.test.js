@@ -63,6 +63,31 @@ describe("CarMaintenanceBook Test", function () {
         return { maintenanceContract, erc20Contract, owner, distributor, user, user2, tokenId, hash, uri, maintenance }
     }
 
+    describe("Check Deploy Smart Contract", () => {
+        beforeEach(async function () {
+            const maintenanceContract = await loadFixture(deployFixture);
+        });
+
+        it("Check owner Smart Contract", async function () {
+            assert.equal(await maintenanceContract.owner(), owner.address)
+        });
+
+        it("should not set a new address contract for the cagnotte if you are not the owner", async function () {
+            const Erc20Contract2 = await ethers.getContractFactory("CarMaintenanceLoyalty");
+            erc20Contract = await Erc20Contract2.deploy();
+            await expect(maintenanceContract.connect(user).setCagnotteToken(erc20Contract.target))
+                .to.be.revertedWithCustomError(maintenanceContract, "OwnableUnauthorizedAccount")
+                .withArgs(user.address);
+        });
+
+        it("should set a new address contract for the cagnotte", async function () {
+            const Erc20Contract2 = await ethers.getContractFactory("CarMaintenanceLoyalty");
+            erc20Contract = await Erc20Contract2.deploy();
+            await maintenanceContract.setCagnotteToken(erc20Contract.target)
+            assert.equal(await maintenanceContract.cagnotteToken(), erc20Contract.target)
+        });
+    })
+
     describe("Check Distributor", () => {
         beforeEach(async function () {
             const maintenanceContract = await loadFixture(deployFixture);
@@ -72,6 +97,12 @@ describe("CarMaintenanceBook Test", function () {
             await expect(maintenanceContract.connect(owner).setDistributor(distributor.address))
                 .to.emit(maintenanceContract, 'DistributorRegistered')
                 .withArgs(distributor.address);
+        });
+
+        it("should not add an distributor if you are not the owner", async function () {
+            await expect(maintenanceContract.connect(user).setDistributor(distributor.address))
+                .to.be.revertedWithCustomError(maintenanceContract, "OwnableUnauthorizedAccount")
+                .withArgs(user.address);
         });
 
         it("should not add an distributor already registered", async function () {
