@@ -32,7 +32,7 @@ describe("CarMaintenanceBook Test", function () {
         const MaintenanceContract = await ethers.getContractFactory("CarMaintenanceBook");
         maintenanceContract = await MaintenanceContract.deploy(erc20Contract.target);
 
-        await erc20Contract.connect(owner).addAdmin(maintenanceContract.target)
+        await erc20Contract.connect(owner).addAdmins(maintenanceContract.target)
 
         await maintenanceContract.connect(owner).setDistributor(distributor.address)
 
@@ -53,7 +53,7 @@ describe("CarMaintenanceBook Test", function () {
         const MaintenanceContract = await ethers.getContractFactory("CarMaintenanceBook");
         maintenanceContract = await MaintenanceContract.deploy(erc20Contract.target);
 
-        await erc20Contract.connect(owner).addAdmin(maintenanceContract.target)
+        await erc20Contract.connect(owner).addAdmins(maintenanceContract.target)
 
         await maintenanceContract.connect(owner).setDistributor(distributor.address)
 
@@ -165,6 +165,13 @@ describe("CarMaintenanceBook Test", function () {
         it("should unlock token ", async function () {
             await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
             await expect(maintenanceContract.connect(distributor).unlockToken(hash))
+                .to.emit(maintenanceContract, 'Unlocked')
+                .withArgs(hash);
+        });
+
+        it("should unlock token if you are the owner", async function () {
+            await maintenanceContract.safeMint(user.address, hash, uri);
+            await expect(maintenanceContract.unlockToken(hash))
                 .to.emit(maintenanceContract, 'Unlocked')
                 .withArgs(hash);
         });
