@@ -289,7 +289,9 @@ describe("CarMaintenanceBook Test", function () {
         });
 
         it("should transfer token at new address", async function () {
-            await maintenanceContract.connect(distributor).transferTokenNew(user.address, user2.address, hash)
+            await expect(maintenanceContract.connect(distributor).transferTokenNew(user.address, user2.address, hash))
+                .to.emit(erc20Contract, "PrizePoolDelivered")
+                .withArgs(user.address);
             assert.equal(await maintenanceContract.ownerOf(hash), user2.address)
         });
 
