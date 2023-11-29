@@ -24,8 +24,11 @@ const CarMaintenanceBookContextProvider = ({children}) => {
     const [ isOwner, setIsOwner ] = useState(false);
     const [ ownerAddress, setOwnerAddress ] = useState('');
     const [ state, dispatchFromEventsAction ] = useReducer(CarMaintenanceBookReducer, {
-        distributorAddresses: [],
-        isDistributor: false
+        distributorAddress: [],
+        isDistributor: false,
+        vehicleOwnerAddress: [],
+        isVehicleOwner: false,
+        idsToken: [],
     });
 
     // Function to listen all Events of Smart Contract
@@ -59,7 +62,7 @@ const CarMaintenanceBookContextProvider = ({children}) => {
                 // Set the state with the new Event
                 console.log(logs)
                 dispatchFromEventsAction({
-                    type: CARMAINTENANCEBOOK_USER_CHANGES,
+                    type: CARMAINTENANCEBOOK_EVENTS_UPDATE_ACTION,
                     payload: { userAddress: address, logs }
                 });
             },
@@ -94,13 +97,13 @@ const CarMaintenanceBookContextProvider = ({children}) => {
             // fetch past events and start watching for all new incoming events
             listenToAllEvents();
             // ask the reducer to update the state as the user has changed
-            /*dispatchFromEventsAction({
-                type: VOTING_USER_CHANGES,
+            dispatchFromEventsAction({
+                type: CARMAINTENANCEBOOK_USER_CHANGES,
                 payload: {
                     isUserConnected: isConnected,
                     userAddress: address
                 }
-            });*/
+            });
         } else { // If no user is connected, there is no admin here
             setIsOwner(false);
         }
@@ -124,11 +127,19 @@ const CarMaintenanceBookContextProvider = ({children}) => {
 
         <CarMaintenanceBookContext.Provider value={{
             isUserConnected: isConnected,
+            userAddress: address,
+            //Owner
             ownerAddress: ownerAddress,
             isUserOwner: isOwner,
-            userAddress: address,
-            distributorAddresses: state.distributorAddresses,
-            isDistributor: state.isDistributor
+            //Distributor
+            distributorAddress: state.distributorAddress,
+            distributorCount: state.distributorAddress.length,
+            isDistributor: state.isDistributor,
+            //Vehicle Owner
+            vehicleOwnerAddress: state.vehicleOwnerAddress,
+            isVehicleOwner: state.isVehicleOwner,
+            //ID TOKEN NFT
+            idsToken: state.idsToken
         }}>
             { children }
         </CarMaintenanceBookContext.Provider>
