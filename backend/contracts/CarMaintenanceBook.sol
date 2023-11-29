@@ -150,6 +150,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
 
     /// @notice Transfers an NFT from one address to another.
     /// @dev Only distributors can transfer tokens.
+    /// Mint tokens to the cagnotte at user from.
     /// @param _from The address from which the NFT will be transferred.
     /// @param _to The address to which the NFT will be transferred.
     /// @param _idToken The identifier for an NFT.
