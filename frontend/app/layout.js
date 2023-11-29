@@ -9,6 +9,7 @@ import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from '@wagmi/core/providers/infura';
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { hardhat, sepolia } from 'wagmi/chains';
+import {CarMaintenanceBookContextProvider} from "@/contexts/CarMaintenanceBook.context";
 
 const { chains, publicClient } = configureChains(
     [/*sepolia,*/ hardhat],
@@ -33,9 +34,11 @@ export default function RootLayout({ children }) {
             <body>
                 <WagmiConfig config={wagmiConfig}>
                     <RainbowKitProvider chains={chains}>
-                        <ChakraProvider>
-                            {children}
-                        </ChakraProvider>
+                        <CarMaintenanceBookContextProvider>
+                            <ChakraProvider>
+                                {children}
+                            </ChakraProvider>
+                        </CarMaintenanceBookContextProvider>
                     </RainbowKitProvider>
                 </WagmiConfig>
             </body>
