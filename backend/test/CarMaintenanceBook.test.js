@@ -9,6 +9,8 @@ describe("CarMaintenanceBook Test", function () {
     let tokenId;
     let hash;
     let uri;
+    let description;
+    let mileage;
     let maintenance;
 
     async function deployFixture() {
@@ -40,8 +42,10 @@ describe("CarMaintenanceBook Test", function () {
         hash = await maintenanceContract.generateTokenId(tokenId)
         uri = "ipfs://QmHash123/"+hash+".json";
         maintenance = "Vidange";
+        description = "Vidange moteur + vérification des niveaux fluide et resserage des ecroux";
+        mileage = 1500;
 
-        return { maintenanceContract, erc20Contract, owner, distributor, user, user2, tokenId, hash, uri, maintenance }
+        return { maintenanceContract, erc20Contract, owner, distributor, user, user2, tokenId, hash, uri, maintenance, mileage }
     }
 
     async function NftMintAndMaintenanceAddedFixture() {
@@ -61,11 +65,13 @@ describe("CarMaintenanceBook Test", function () {
         hash = await maintenanceContract.generateTokenId(tokenId)
         uri = "ipfs://QmHash123/"+hash+".json";
         maintenance = "Vidange";
+        description = "Vidange moteur + vérification des niveaux fluide et resserage des ecroux"
+        mileage = 1500;
 
         await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
-        await maintenanceContract.connect(distributor).addMaintenance(hash, maintenance);
+        await maintenanceContract.connect(distributor).addMaintenance(hash, mileage, maintenance, description);
 
-        return { maintenanceContract, erc20Contract, owner, distributor, user, user2, tokenId, hash, uri, maintenance }
+        return { maintenanceContract, erc20Contract, owner, distributor, user, user2, tokenId, hash, uri, maintenance, description, mileage }
     }
 
     describe("Check Deploy Smart Contract", () => {
@@ -189,18 +195,18 @@ describe("CarMaintenanceBook Test", function () {
 
         it("should not add an maintenance and update cagnotte if you are not distributor", async function () {
             await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
-            await expect(maintenanceContract.connect(user).addMaintenance(hash, maintenance))
+            await expect(maintenanceContract.connect(user).addMaintenance(hash, mileage, maintenance, description))
                 .to.be.rejectedWith(maintenanceContract, "Not a distributor");
         });
 
         it("should not add an maintenance and update cagnotte if the token doesnt exists", async function () {
-            await expect(maintenanceContract.connect(distributor).addMaintenance(hash, maintenance))
+            await expect(maintenanceContract.connect(distributor).addMaintenance(hash, mileage, maintenance, description))
                 .to.be.rejectedWith(maintenanceContract, "Token not exists");
         });
 
         it("should add an maintenance and update cagnotte", async function () {
             await maintenanceContract.connect(distributor).safeMint(user.address, hash, uri);
-            await maintenanceContract.connect(distributor).addMaintenance(hash, maintenance);
+            await maintenanceContract.connect(distributor).addMaintenance(hash, mileage, maintenance, description);
             const cagnotteBalance = await erc20Contract.totalTokens(user.address);
             assert.equal(cagnotteBalance,1100);
         });
