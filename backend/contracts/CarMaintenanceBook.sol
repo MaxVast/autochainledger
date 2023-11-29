@@ -156,9 +156,8 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// @param _idToken The identifier for an NFT.
     function transferTokenNew(address _from, address _to, uint256 _idToken) external onlyDistributor tokenIsExists(_idToken) {
         require(ownerOf(_idToken) == _from, "Token does not belong to the specified address");
-        //ajouter fonction mint token
-        cagnotteToken.mint(_from);// test a modifier
         _transfer(_from, _to, _idToken);
+        cagnotteToken.mint(_from);
     }
 
     /// @notice Retrieves the URI associated with an NFT.
@@ -180,8 +179,8 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// Credits 100 tokens to the cagnotte for each maintenance added.
     /// @param _idToken The identifier for an NFT.
     /// @param _maintenance The details of the maintenance.
-    function addMaintenance(uint256 _idToken, string calldata _maintenance ) external onlyDistributor tokenIsExists(_idToken) {
-        Maintenances[_idToken].push(Maintenance(_maintenance, block.timestamp));
+    function addMaintenance(uint256 _idToken, uint256 _mileage, string calldata _maintenance, string calldata _description ) external onlyDistributor tokenIsExists(_idToken) {
+        Maintenances[_idToken].push(Maintenance(_maintenance, _description, _mileage, block.timestamp));
         cagnotteToken.addCagnotte(ownerOf(_idToken), 100);
     }
 
