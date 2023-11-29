@@ -80,6 +80,12 @@ const CarMaintenanceBookContextProvider = ({children}) => {
         setIsOwner(address === owner);
     }
 
+    useEffect(() => {
+
+        if (!state.isDistributor) return;
+
+    }, [state.isDistributor]);
+
     // When the user connection state or address changes checks if the user is the admin or not
     useEffect( () => {
         if (isConnected) { // If the user is connected
