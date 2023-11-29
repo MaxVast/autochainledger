@@ -3,8 +3,21 @@ export const CARMAINTENANCEBOOK_USER_CHANGES = 'carMaintenanceBook/user/changes'
 
 const carMaintenanceBookContextReducer = (state, action) => {
     if (action.type === CARMAINTENANCEBOOK_EVENTS_UPDATE_ACTION) {
+        // Use a set to ensure uniqueness
+        let uniqueDistributor = new Set(state.distributorAddresses);
+        // Update the state according of which event is received
+        for (let log of action.payload.logs) {
+
+            switch (log.eventName) {
+                case 'DistributorRegistered':
+                    uniqueDistributor.add(log.args.distributorAddresses);
+                    break;
+            }
+        }
         return {
-            ...state
+            ...state,
+            distributorAddresses: Array.from(uniqueDistributor), // Convert set to array to store in state
+            isDistributor: uniqueDistributor.has(action.payload.userAddress)
         }
     }
 
