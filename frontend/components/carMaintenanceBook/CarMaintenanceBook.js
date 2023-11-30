@@ -1,10 +1,10 @@
 "use client"
 
 import useCarMaintenanceBook from "@/hooks/useCarMaintenanceBook";
-import DistributorView from "@/components/distributor/DistributorView/DistributorView";
 import OwnerView from "@/components/owner/OwnerView/OwnerView";
 
 import { Center, Flex } from "@chakra-ui/react";
+import DistributorView from "../ distributor/DistributorView/DistributorView";
 
 const CarMaintenanceBook = () => {
     /* State & Context */

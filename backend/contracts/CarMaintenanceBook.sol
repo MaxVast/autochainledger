@@ -160,13 +160,6 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
         cagnotteToken.mint(_from);
     }
 
-    /// @notice Retrieves the URI associated with an NFT.
-    /// @dev The URI is a string that provides information about the NFT.
-    /// @param _idToken The identifier for an NFT.
-    function getTokenURI(uint256 _idToken) public view tokenIsExists(_idToken) returns (string memory) {
-        return tokenData[_idToken].uri;
-    }
-
     /// @notice Generates a unique token ID based on the provided VIN.
     /// @dev The VIN (Vehicle Identification Number) is used to generate a unique ID.
     /// @param _vin The Vehicle Identification Number.
@@ -207,6 +200,13 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     }
 
     //Override function ERC721
+
+    /// @notice Retrieves the URI associated with an NFT.
+    /// @dev  Overrides the ERC721 tokenURI function.
+    function tokenURI(uint _idToken) public view virtual override(ERC721) tokenIsExists(_idToken) returns(string memory) {
+        return string(abi.encodePacked(tokenData[_idToken].uri));
+    }
+
     /// @dev Overrides the ERC721 transferFrom function to include the IsTransferAllowed modifier.
     function transferFrom(address from, address to, uint256 tokenId) public override(ERC721) IsTransferAllowed(tokenId) {
         super.transferFrom(from, to, tokenId);

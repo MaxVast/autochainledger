@@ -1,7 +1,8 @@
 "use client"
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import {Box, Center, Flex, Heading, Text, VStack} from '@chakra-ui/react'
-import EmitBookCarView from "@/components/distributor/EmitBookCarView/EmitBookCarView";
+import EmitBookCarView from '../EmitBookCarView/EmitBookCarView';
+
 
 const DistributorView = () => {
     const [path, setPath] = useState('');
