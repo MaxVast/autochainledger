@@ -1,8 +1,9 @@
 "use client"
 
 import useCarMaintenanceBook from "@/hooks/useCarMaintenanceBook";
-import OwnerView from "../owner/OwnerView/OwnerView";
-import DistributorView from "../ distributor/DistributorView/DistributorView";
+import DistributorView from "@/components/distributor/DistributorView/DistributorView";
+import OwnerView from "@/components/owner/OwnerView/OwnerView";
+
 import { Center, Flex } from "@chakra-ui/react";
 
 const CarMaintenanceBook = () => {
@@ -16,7 +17,9 @@ const CarMaintenanceBook = () => {
                 isUserOwner ? (
                     <>
                         <Flex direction="column" width='100%'>
-                            <h1>Owner connected</h1>
+                            <Center>
+                                <h1>Owner connected</h1>
+                            </Center>
                             <OwnerView />
                         </Flex>
                     </>
