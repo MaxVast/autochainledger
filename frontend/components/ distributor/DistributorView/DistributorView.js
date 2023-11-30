@@ -1,27 +1,48 @@
 "use client"
-import React from 'react'
-import Navigation from '../Navigation/Navigation'
-import { Flex, Heading } from '@chakra-ui/react'
-import { useRouter } from 'next/router';
+import {useEffect, useState} from 'react'
+import {Box, Flex, Heading, Text, VStack} from '@chakra-ui/react'
 
 const DistributorView = () => {
-  const router = useRouter();
-  // Vérifiez la route actuelle et déterminez le contenu à afficher
-  if (router.pathname === '/profile') {
-    content = <Text>Contenu du profil</Text>;
-  } else {
-    content = <Heading size="xl">Distributor connected</Heading>;
-  }
-  return (
-    <>
-        <Flex direction="column" width='100%'>
-            <Navigation />
-            <Flex width='90%' ml="250px" p="4"> {}
-                <Heading size="xl">Distributor connected</Heading>
+    const [path, setPath] = useState('');
+
+    return (
+        <>
+            <Flex direction="column" width='100%'>
+                <Flex Flex direction="column" width='10%'>
+                    <Box
+                        bg="gray.800"
+                        color="white"
+                        p="4"
+                        pos="fixed"
+                        h="full"
+                    >
+                        <Flex h="20" alignItems="left" justifyContent="space-start">
+                            <VStack align="start" spacing="4">
+                                <Text fontSize="lg" fontWeight="bold" cursor="pointer" onClick={() => setPath('/')}>
+                                    Home
+                                </Text>
+
+                                <Text fontSize="lg" fontWeight="bold" cursor="pointer" onClick={() => setPath('/emit-book')} >
+                                    Emit a maintenance book
+                                </Text>
+
+                                <Text fontSize="lg" fontWeight="bold" cursor="pointer">
+                                    Add maintenance
+                                </Text>
+                                <Text fontSize="lg" fontWeight="bold" cursor="pointer">
+                                    Transfer an book
+                                </Text>
+                            </VStack>
+                        </Flex>
+                    </Box>
+                </Flex>
+                <Flex ml="250px" p="4">
+                    {path}
+                    <Heading size="xl">Distributor connected</Heading>
+                </Flex>
             </Flex>
-        </Flex>
-    </>
-  )
+        </>
+    )
 }
 
 export default DistributorView
