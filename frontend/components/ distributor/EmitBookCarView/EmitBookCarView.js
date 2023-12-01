@@ -18,7 +18,7 @@ const EmitBookCarView = () => {
     const [vin, setVin] = useState('');
     const [selectedBrand, setSelectedBrand] = useState('');
     const [carModel, setCarModel] = useState('');
-    const [idToken, setIdToken] = useState(0);
+    const [idToken, setIdToken] = useState(null);
     const [tokenUri, setTokenUri] = useState('');
     // Toasts
     const toast = useToast()
@@ -40,35 +40,57 @@ const EmitBookCarView = () => {
 
         // Ajoutez ici la logique pour traiter les données du formulaire
         console.log('Données du formulaire :', { ownerAddres, carPhoto, vin, selectedBrand, carModel });
-        await generateIdToken()
-        await storeNFT()
-        await emitNft()
+        try {
+            const [idToken, tokenUri] = await Promise.all([generateIdToken(), storeNFT()]);
+            await emitNft(idToken, tokenUri)
+        } catch (error) {
+            // Handle errors from generateIdToken, storeNFT, or emitNft
+            console.error('Error during form submission:', error);
+        }
     };
 
     const getImage = async () => {
-        const r = await fetch(carPhoto)
-        if (!r.ok) {
-            throw new Error(`error fetching image: [${r.statusCode}]: ${r.status}`)
+        const blob = dataURLtoBlob(carPhoto);
+        console.log(blob)
+        return new File([blob], 'picutre', { type: blob.type });
+    };
+    
+    // Helper function to convert data URL to Blob
+    const dataURLtoBlob = (dataURL) => {
+        const arr = dataURL.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const byteString = atob(arr[1]);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
         }
-        return r.blob()
-    }
+        return new Blob([arrayBuffer], { type: mime });
+    };
 
     const storeNFT = async () => {
-        const image = await getImage()
-        const nft = {
-            image,
-            name: "NFT AutoChain Ledger",
-            description: "This NFT is the identification book on the blockchain",
-            properties: {
-              brand: selectedBrand,
-              model: carModel,
-              authors: [{ name: "Autochain Ledger" }],
+        try {
+            const imageNft = await getImage()
+            console.log(imageNft)
+            const nft = {
+                image: imageNft,
+                name: "NFT AutoChain Ledger",
+                description: "This NFT is the identification book on the blockchain",
+                properties: {
+                brand: selectedBrand,
+                model: carModel,
+                authors: [{ name: "Autochain Ledger" }],
+                }
             }
+            const clientNftStorage = new NFTStorage({ token: process.env.NEXT_PUBLIC_NFTSTORAGE_API_KEY })
+            const metadata = await clientNftStorage.store(nft)
+            console.log('NFT data stored!')
+            setTokenUri(metadata.url)
+            return metadata.url;
+        } catch (err) {
+            console.log(err);
+            throw err;
         }
-        const clientNftStorage = new NFTStorage({ token: process.env.NEXT_PUBLIC_NFTSTORAGE_API_KEY })
-        const metadata = await clientNftStorage.store(nft)
-        console.log('NFT data stored!')
-        setTokenUri(metadata.url)
     }
 
     const generateIdToken = async () => {
@@ -81,12 +103,14 @@ const EmitBookCarView = () => {
             });
             console.log(tokenId)
             setIdToken(tokenId)
+            return tokenId;
         } catch (err) {
             console.log(err)
         }
     }
 
-    const emitNft = async () => {
+    const emitNft = async (idToken, tokenUri) => {
+        console.log(`args : ${ownerAddres}, ${idToken}, ${tokenUri}`)
         try {
             const { request } = await prepareWriteContract({
                 address: contractAddressCarMaintenanceBook,

@@ -7,7 +7,7 @@ import Link from "next/link"
 const Header = ({ path }) => {
     return (
         <>
-            <Flex p="2rem" bg="#eee">
+            <Flex p="1rem" bg="#eee" pos="fixed" width='100%' min-height='100px' height='auto'>
                 <Box>
                     <Heading>
                         <Link href="/">

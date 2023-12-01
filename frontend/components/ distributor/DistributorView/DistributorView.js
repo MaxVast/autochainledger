@@ -2,9 +2,11 @@
 import {useState} from 'react'
 import {Box, Center, Flex, Heading, Text, VStack} from '@chakra-ui/react'
 import EmitBookCarView from '../EmitBookCarView/EmitBookCarView';
+import ListBookCarView from '../ListBookCarView/ListBookCarView';
 
 
 const DistributorView = () => {
+    /* State & Context */
     const [path, setPath] = useState('');
 
     const renderDistributorActionComponent = () => {
@@ -18,7 +20,7 @@ const DistributorView = () => {
             return <></>
         }
         else {
-            return <></>
+            return <ListBookCarView />
         }
     }
 
@@ -32,6 +34,7 @@ const DistributorView = () => {
                         p="4"
                         pos="fixed"
                         h="full"
+                        top="135"
                     >
                         <Flex h="20" alignItems="left" justifyContent="space-start">
                             <VStack align="start" spacing="4">
@@ -53,14 +56,14 @@ const DistributorView = () => {
                         </Flex>
                     </Box>
                 </Flex>
-                <Flex ml="250px" p="4" >
+                <Flex ml="250px" mt="130px" p="4" >
                     <VStack spacing={4}  width='100%'>
                         <Box>
                             <Center width='100%'>
                                 <Heading size="xs">Distributor connected</Heading>
                             </Center>
                         </Box>
-                        <Flex p="1rem" width='100%' overflow='scroll'>
+                        <Flex p="1rem" width='100%'>
                             <Box>
                                 { renderDistributorActionComponent() }
                             </Box>

@@ -23,6 +23,8 @@ const CarMaintenanceBookContextProvider = ({children}) => {
     const { address, isConnected } = useAccount();
     const [ isOwner, setIsOwner ] = useState(false);
     const [ ownerAddress, setOwnerAddress ] = useState('');
+    const [ tokens, setTokens ] = useState([]);
+
     const [ state, dispatchFromEventsAction ] = useReducer(CarMaintenanceBookReducer, {
         distributorAddress: [],
         isDistributor: false,
@@ -83,10 +85,91 @@ const CarMaintenanceBookContextProvider = ({children}) => {
         setIsOwner(address === owner);
     }
 
+     // Fetch unfetched token Nft details
+     const fetchDetailedNfts = async () => {
+        
+        if (!state.isDistributor) return;
+
+        if (state.idsToken.length <= 0) return;
+    
+        const unfetchedTokenIds = state.idsToken;
+
+        if (unfetchedTokenIds.length <= 0) return;
+
+        const fetchedTokens = [];
+    
+        for(let ID of unfetchedTokenIds) {
+            if(BigInt(ID) != 0) {
+                try {
+                    const fetchedToken = await readContract({
+                        address: contractAddressCarMaintenanceBook,
+                        abi: contractAbiCarMaintenanceBook,
+                        functionName: 'tokenURI',
+                        args: [BigInt(ID)]
+                    });
+
+                    const ownerToken = await readContract({
+                        address: contractAddressCarMaintenanceBook,
+                        abi: contractAbiCarMaintenanceBook,
+                        functionName: 'ownerOf',
+                        args: [BigInt(ID)]
+                    });
+            
+                    const tokenURI = fetchedToken.slice(7)
+                    const newUriToken = 'https://ipfs.io/ipfs/'+tokenURI
+                    const response = await fetch(newUriToken)
+                    if (!response.ok) {
+                        if (response.status === 504) {
+                            console.error('504 Gateway Timeout Error');
+                        } else {
+                            console.error('Error fetching data:', response.statusText);
+                        }
+                        continue; // Skip to the next iteration
+                    } else {
+                        const result = await response.json()
+                        let linkImage = result.image.slice(7)
+                        let newUriImage = 'https://ipfs.io/ipfs/'+linkImage
+                
+                        fetchedTokens.push({
+                            id: ID,
+                            owner: ownerToken,
+                            brand: result.properties.brand,
+                            model: result.properties.model,
+                            image: newUriImage
+                        });
+
+                        console.log(fetchedTokens)
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error.message);
+                    // You can implement your own error handling logic here
+                }
+            }
+          
+        }
+    
+        // Update the component state to re-render the UI with the newly fetched proposals
+        setTokens([...fetchedTokens]);
+    }
+
     useEffect(() => {
 
         if (!state.isDistributor) return;
+        if (state.idsToken.length > 0) fetchDetailedNfts();
 
+    }, [state.isDistributor]);
+
+    useEffect(() => {
+
+        if (!state.isDistributor) return;
+        if (state.idsToken.length > 0) fetchDetailedNfts();
+
+    }, [state.idsToken]);
+
+    useEffect(() => {
+
+        if (!state.isDistributor) return;
+        fetchDetailedNfts();
     }, [state.isDistributor]);
 
     // When the user connection state or address changes checks if the user is the admin or not
@@ -139,7 +222,8 @@ const CarMaintenanceBookContextProvider = ({children}) => {
             vehicleOwnerAddress: state.vehicleOwnerAddress,
             isVehicleOwner: state.isVehicleOwner,
             //ID TOKEN NFT
-            idsToken: state.idsToken
+            idsToken: state.idsToken,
+            tokens: tokens
         }}>
             { children }
         </CarMaintenanceBookContext.Provider>
