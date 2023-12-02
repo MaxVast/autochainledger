@@ -8,9 +8,7 @@ import { Box, SimpleGrid, Text, Image, Flex, Badge, Button } from '@chakra-ui/re
 
 const ListBookCarView = () => {
     const { idsToken, tokens } = useCarMaintenanceBook()
-
     const copyToClipboard = (address) => navigator.clipboard.writeText(address);
-    console.log(tokens)
     return (
         <>
             <SimpleGrid columns={2} spacing={4}>

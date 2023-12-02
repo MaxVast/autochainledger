@@ -1,8 +1,9 @@
 "use client"
 import {useState} from 'react'
-import {Box, Center, Flex, Heading, Text, VStack} from '@chakra-ui/react'
+import {Box, Button, Center, Flex, Heading, Text, VStack} from '@chakra-ui/react'
 import EmitBookCarView from '../EmitBookCarView/EmitBookCarView';
 import ListBookCarView from '../ListBookCarView/ListBookCarView';
+import AddMaintencance from '../AddMaintenance/AddMaintencance';
 
 
 const DistributorView = () => {
@@ -14,7 +15,7 @@ const DistributorView = () => {
             return <EmitBookCarView />
         }
         else if (path === 'add-maintenance') {
-            return <></>
+            return <AddMaintencance />
         }
         else if (path === 'transfer-book') {
             return <></>
@@ -28,20 +29,12 @@ const DistributorView = () => {
         <>
             <Flex direction="column" width='100%'>
                 <Flex direction="column" width='10%'  bg="gray.800">
-                    <Box
-                        bg="gray.800"
-                        color="white"
-                        p="4"
-                        pos="fixed"
-                        h="full"
-                        top="135"
-                    >
+                    <Box bg="gray.800" color="white" p="4" pos="fixed" h="full" top="135">
                         <Flex h="20" alignItems="left" justifyContent="space-start">
                             <VStack align="start" spacing="4">
                                 <Text fontSize="lg" fontWeight="bold" cursor="pointer" onClick={() => setPath('')}>
                                     Home
                                 </Text>
-
                                 <Text fontSize="lg" fontWeight="bold" cursor="pointer" onClick={() => setPath('emit-book')} >
                                     Emit a maintenance book
                                 </Text>
@@ -66,9 +59,17 @@ const DistributorView = () => {
                         <Flex p="1rem" width='100%'>
                             <Box>
                                 { renderDistributorActionComponent() }
-                            </Box>
+                            </Box>  
                         </Flex>
-
+                        { path != '' ? (
+                            <Flex p="1rem" width='100%'>
+                              <Box>
+                                <Button type="submit" colorScheme="red" cursor="pointer" onClick={() => setPath('')}>Cancel</Button>
+                              </Box>
+                            </Flex>
+                        ) : (
+                          <></>
+                        )}
                     </VStack>
                 </Flex>
             </Flex>

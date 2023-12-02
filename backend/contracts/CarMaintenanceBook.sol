@@ -171,7 +171,9 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// @dev Only distributors can add maintenance information.
     /// Credits 100 tokens to the cagnotte for each maintenance added.
     /// @param _idToken The identifier for an NFT.
+    /// @param _mileage identifier for mileage.
     /// @param _maintenance The details of the maintenance.
+    /// @param _description The description of the maintenance.
     function addMaintenance(uint256 _idToken, uint256 _mileage, string calldata _maintenance, string calldata _description ) external onlyDistributor tokenIsExists(_idToken) {
         Maintenances[_idToken].push(Maintenance(_maintenance, _description, _mileage, block.timestamp));
         cagnotteToken.addCagnotte(ownerOf(_idToken), 100);

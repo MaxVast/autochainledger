@@ -137,18 +137,13 @@ const CarMaintenanceBookContextProvider = ({children}) => {
                             model: result.properties.model,
                             image: newUriImage
                         });
-
-                        console.log(fetchedTokens)
                     }
                 } catch (error) {
                     console.error('Error fetching data:', error.message);
-                    // You can implement your own error handling logic here
                 }
             }
           
         }
-    
-        // Update the component state to re-render the UI with the newly fetched proposals
         setTokens([...fetchedTokens]);
     }
 
