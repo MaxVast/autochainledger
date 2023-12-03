@@ -76,7 +76,7 @@ const OwnerView = () => {
     }
     return (
         <>
-            <Flex p="1rem" width='100%' mt="130px">
+            <Flex p="1rem" width='100%'>
                 <VStack spacing={10} height='100%' width='100%'>
                     <Box>
                         <Heading as='h4' size='md'>

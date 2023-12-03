@@ -1,19 +1,33 @@
 "use client"
-
+// REACT
+import {useState} from 'react'
+// CONTEXT
 import useCarMaintenanceBook from '@/hooks/useCarMaintenanceBook'
-import React from 'react'
+
 // Chackra UI
 import { CopyIcon } from '@chakra-ui/icons'
 import { Box, SimpleGrid, Text, Image, Flex, Badge, Button } from '@chakra-ui/react'
+import DetailView from '@/components/maintenance/DetailView/DetailView'
 
 const ListBookCarView = () => {
+    const [selectedTokenId, setSelectedTokenId] = useState(null);
     const { idsToken, tokens } = useCarMaintenanceBook()
     const copyToClipboard = (address) => navigator.clipboard.writeText(address);
+    const selectedToken = tokens.find((token) => token.id === selectedTokenId);
+  
+    const handleCardClick = (tokenId) => {
+        setSelectedTokenId(tokenId);
+    };
+    
+    const handleCloseDetails = () => {
+        setSelectedTokenId(null);
+    };
+    
     return (
         <>
-            <SimpleGrid columns={2} spacing={4}>
+            <SimpleGrid columns={2} spacing={4} margin={4}>
                 {tokens.map((token) => (
-                    <Box key={token.id} borderWidth="1px" borderRadius="lg" overflow="hidden">
+                    <Box key={token.id} borderWidth="1px" borderRadius="lg" overflow="hidden" onClick={() => handleCardClick(token.id)}>
                         <Image src={token.image} alt={`Car ${token.id}`} maxWidth='250px' loading="lazy" />
 
                         <Box p="6">
@@ -65,6 +79,10 @@ const ListBookCarView = () => {
                     </Box>
                 ))}
             </SimpleGrid>
+
+            {selectedToken && (
+                <DetailView selectedToken={selectedToken} onClose={handleCloseDetails} />
+            )}
         </>
     )
 }

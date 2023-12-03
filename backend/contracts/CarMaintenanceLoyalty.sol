@@ -41,12 +41,15 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     }
 
     /// @dev Constructor to initialize the ERC20 token with a name and symbol
-    constructor() ERC20("AutoChain Ledger Token", "ACLT") Ownable(msg.sender) {}
+    constructor() ERC20("AutoChain Ledger Token", "ACLT") Ownable(msg.sender) {
+        _mint(msg.sender, 1000000 * 10 ** decimals());
+    }
 
     /// @notice Adds an administrator with the specified address
     /// @dev Only the owner can add administrators
     /// @param _admin The address of the administrator to be added
     function addAdmins(address _admin) external onlyOwner {
+        require(!admins[msg.sender], "Admin already registered");
         admins[_admin] = true;
         emit AdminAdded(_admin);
     }
@@ -55,6 +58,7 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     /// @dev Only the owner can remove administrators
     /// @param _admin The address of the administrator to be removed
     function removeAdmins(address _admin) external onlyOwner {
+        require(admins[msg.sender], "Admin already remove");
         admins[_admin] = false;
         emit AdminRemoved(_admin);
     }

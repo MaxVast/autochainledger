@@ -2,7 +2,7 @@
 //ReactJS
 import { useState } from 'react'
 // Chackra UI
-import { Heading, FormControl, FormLabel, Input, Select, Button, Textarea, useToast } from '@chakra-ui/react';
+import { Heading, FormControl, FormLabel, Input, Select, Button, Textarea, useToast, Flex, Box } from '@chakra-ui/react';
 //Constants information SmartContract
 import { contractAbiCarMaintenanceBook, contractAddressCarMaintenanceBook } from '@/constants/index'
 // Wagmi
@@ -40,6 +40,13 @@ const AddMaintencance = () => {
     const [description, setDescription] = useState('');
     // Toasts
     const toast = useToast()
+
+    const resetFrom = async () => {
+        setIdToken('')
+        setMileage('')
+        setMaintenance('')
+        setDescription('')
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -99,46 +106,57 @@ const AddMaintencance = () => {
 
     return (
         <>
-            <Heading mb={4}>Ajouter une maintenance</Heading>
-            <form onSubmit={handleSubmit}>
-                <FormControl mb={4}>
-                    <FormLabel>ID Token:</FormLabel>
-                    <Input type="text" value={idToken} onChange={(e) => setIdToken(e.target.value)} />
-                </FormControl>
-                <FormControl mb={4}>
-                    <FormLabel>Kilométrage :</FormLabel>
-                    <Input
-                        type="number"
-                        inputMode="numeric"
-                        min="0"
-                        value={mileage}
-                        onChange={(e) => setMileage(e.target.value)}
-                    />
-                </FormControl>
-                <FormControl mb={4}>
-                    <FormLabel>Maintenance:</FormLabel>
-                    <Select
-                        placeholder="Motif de maintenance*"
-                        value={maintenance}
-                        onChange={(e) => setMaintenance(e.target.value)}
-                    >
-                        {maintenanceOptions.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl mb={4}>
-                    <FormLabel>Description:</FormLabel>
-                    <Textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        maxLength={256}
-                    />
-                </FormControl>
-                <Button type="submit" colorScheme="teal">Envoyer</Button>
-            </form>
+            <Flex align="center" justify="center" margin={4}>
+            <Box width="100%" p="4" borderWidth="1px" borderRadius="lg" boxShadow="lg">
+                <Heading mb={4}>Ajouter une maintenance</Heading>
+                <Flex align="center" justify="end" margin={4}>
+                    <Box justify="" m={2}>
+                        <Button  colorScheme="teal" onClick={() => resetFrom()}>
+                            Annuler
+                        </Button>
+                    </Box>
+                </Flex>
+                <form onSubmit={handleSubmit}>
+                    <FormControl mb={4}>
+                        <FormLabel>ID Token:</FormLabel>
+                        <Input type="text" value={idToken} onChange={(e) => setIdToken(e.target.value)} />
+                    </FormControl>
+                    <FormControl mb={4}>
+                        <FormLabel>Kilométrage :</FormLabel>
+                        <Input
+                            type="number"
+                            inputMode="numeric"
+                            min="0"
+                            value={mileage}
+                            onChange={(e) => setMileage(e.target.value)}
+                        />
+                    </FormControl>
+                    <FormControl mb={4}>
+                        <FormLabel>Maintenance:</FormLabel>
+                        <Select
+                            placeholder="Motif de maintenance*"
+                            value={maintenance}
+                            onChange={(e) => setMaintenance(e.target.value)}
+                        >
+                            {maintenanceOptions.map((option, index) => (
+                            <option key={index} value={option}>
+                                {option}
+                            </option>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl mb={4}>
+                        <FormLabel>Description:</FormLabel>
+                        <Textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            maxLength={256}
+                        />
+                    </FormControl>
+                    <Button type="submit" colorScheme="teal">Envoyer</Button>
+                </form>
+                </Box>
+            </Flex>
     </>
     )
 }

@@ -1,10 +1,7 @@
 "use client"
 
 import useCarMaintenanceBook from "@/hooks/useCarMaintenanceBook";
-import OwnerView from "@/components/owner/OwnerView/OwnerView";
-
-import { Center, Flex } from "@chakra-ui/react";
-import DistributorView from "../ distributor/DistributorView/DistributorView";
+import { Center, Flex, Text } from "@chakra-ui/react";
 
 const CarMaintenanceBook = () => {
     /* State & Context */
@@ -14,36 +11,40 @@ const CarMaintenanceBook = () => {
         <> 
             <Flex style={{ borderBottom: '1px solid #eee' }}>
                 {isUserConnected ? (
-                isUserOwner ? (
-                    <>
-                        <Flex direction="column" width='100%'>
-                            <Center>
-                                <h1>Owner connected</h1>
-                            </Center>
-                            <OwnerView />
-                        </Flex>
-                    </>
-                ) : (
-                    <>
-                        {isDistributor ? (
-                            <>
-                                <Flex direction="column" width='100%'>
-                                    <DistributorView />
-                                </Flex>
-                            </>
-                        ) : (
-                            <>
-                                {isVehicleOwner ? (
-                                    <h1>User with NFT vehicle connected</h1>
-                                ) : (
-                                    <h1>Not connected</h1>
-                                )}
-                            </>
-                        )}
-                    </>
-                )) : (
-                    <h1>Not connected</h1>
-                )}
+                    isUserOwner ? (
+                        <>
+                            <Flex direction="column" width='100%'>
+                                <Center>
+                                    <h1>Owner connected</h1>
+                                </Center>
+                                <Text>Welcome</Text>
+                            </Flex>
+                        </>
+                    ) : (
+                        <>
+                            {isDistributor ? (
+                                <>
+                                    <Flex direction="column" width='100%'>
+                                    <Center>
+                                        <h1>Distributor connected</h1>
+                                    </Center>
+                                        <Text>Welcome</Text>
+                                    </Flex>
+                                </>
+                            ) : (
+                                <>
+                                    {isVehicleOwner ? (
+                                        <h1>User with NFT vehicle connected</h1>
+                                    ) : (
+                                        <h1>Not connected</h1>
+                                    )}
+                                </>
+                            )}
+                        </>
+                    )) : (
+                        <h1>Not connected</h1>
+                    )
+                }
             </Flex>
         </>
     )

@@ -35,6 +35,14 @@ const EmitBookCarView = () => {
         }
     };
 
+    const resetFrom = async () => {
+        setOwnerAddress('')
+        setCarPhoto('')
+        setVin('')
+        setSelectedBrand('')
+        setCarModel('')
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -161,9 +169,16 @@ const EmitBookCarView = () => {
 
     return (
         <>
-            <Flex align="center" justify="center">
+            <Flex align="center" justify="center" margin={4}>
                 <Box width="100%" p="4" borderWidth="1px" borderRadius="lg" boxShadow="lg">
                     <Heading mb="4">Formulaire de Réservation de Véhicule</Heading>
+                    <Flex align="center" justify="end" margin={4}>
+                        <Box justify="" m={2}>
+                            <Button  colorScheme="teal" onClick={() => resetFrom()}>
+                                Annuler
+                            </Button>
+                        </Box>
+                    </Flex>
                     <form onSubmit={handleSubmit}>
                         <Box mb="4">
                             <Text mb="2">Address wallet : </Text>
@@ -219,6 +234,7 @@ const EmitBookCarView = () => {
                         <Button type="submit" colorScheme="teal">
                             Envoyer
                         </Button>
+                        
                     </form>
                 </Box>
             </Flex>
