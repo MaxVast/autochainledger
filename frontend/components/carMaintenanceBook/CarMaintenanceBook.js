@@ -15,9 +15,9 @@ const CarMaintenanceBook = () => {
                         <>
                             <Flex direction="column" width='100%'>
                                 <Center>
-                                    <h1>Owner connected</h1>
+                                    <h1>Administrateur connecté</h1>
                                 </Center>
-                                <Text>Welcome</Text>
+                                <Text>Bienvenue</Text>
                             </Flex>
                         </>
                     ) : (
@@ -26,9 +26,9 @@ const CarMaintenanceBook = () => {
                                 <>
                                     <Flex direction="column" width='100%'>
                                     <Center>
-                                        <h1>Distributor connected</h1>
+                                        <h1>Concessionnaire connecté</h1>
                                     </Center>
-                                        <Text>Welcome</Text>
+                                        <Text>Bienvenue</Text>
                                     </Flex>
                                 </>
                             ) : (
@@ -42,7 +42,7 @@ const CarMaintenanceBook = () => {
                             )}
                         </>
                     )) : (
-                        <h1>Not connected</h1>
+                        <h1>Vous n'êtes pas connecté</h1>
                     )
                 }
             </Flex>
