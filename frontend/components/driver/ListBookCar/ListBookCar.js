@@ -29,7 +29,6 @@ const ListBookCar = () => {
             ) : (
                 <SimpleGrid columns={2} spacing={4} margin={4}>
                     {tokens.map((token) => (
-                        // Ajoutez une condition pour filtrer les tokens
                         token.owner === userAddress && (
                             <Box key={token.id} borderWidth="1px" borderRadius="lg">
                                 <Box onClick={() => handleCardClick(token.id)} cursor="pointer">
