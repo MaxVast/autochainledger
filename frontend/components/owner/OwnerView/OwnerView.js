@@ -2,7 +2,7 @@
 //ReactJS
 import { useState } from 'react'
 // Chackra UI
-import { CopyIcon } from '@chakra-ui/icons'
+import { CopyIcon, DeleteIcon } from '@chakra-ui/icons'
 import { Flex, Heading, useToast, Input, Button, Text, VStack, Box, TableContainer, Table, Thead, Tr, Td, Th, Tbody, Center, Spacer, Badge } from '@chakra-ui/react'
 //Constants information SmartContract
 import { contractAbiCarMaintenanceBook, contractAddressCarMaintenanceBook, contractAbiCarMaintenanceLoyalty, contractAddressCarMaintenanceLoyalty } from '@/constants/index'
@@ -36,16 +36,16 @@ const OwnerView = () => {
             });
             const { hash } = await writeContract(request);
             toast({
-                title: 'In transaction.',
-                description: "Registration in progress",
+                title: 'En transaction.',
+                description: "Enregistrement en cours",
                 status: 'info',
                 duration: 4000,
                 isClosable: true,
             })
             const data = await waitForTransaction({hash: hash})
             toast({
-                title: 'Congratulations.',
-                description: "You have added a distributor !",
+                title: 'Félécitation.',
+                    description: "Vous ajouté un concessionnaire",
                 status: 'success',
                 duration: 4000,
                 isClosable: true,
@@ -80,7 +80,7 @@ const OwnerView = () => {
                 <VStack spacing={10} height='100%' width='100%'>
                     <Box>
                         <Heading as='h4' size='md'>
-                            Register Distributor address
+                            Enregistrer des adresses concessionnaire
                         </Heading>
                     </Box>
 
@@ -88,7 +88,7 @@ const OwnerView = () => {
                         <Box width='50%' paddingRight='2rem'>
 
                             <Flex mt="1rem">
-                                <Input type="text" value={distributor} onChange={e => setDistributor(e.target.value)} placeholder="enter a new voter address" fontSize='0.8rem' background='white'/>
+                                <Input type="text" value={distributor} onChange={e => setDistributor(e.target.value)} placeholder="renseigner une nouvelle adresse concessionnaire" fontSize='0.8rem' background='white'/>
                                 <Button onClick={() => addDistributor()} marginLeft='1rem'>
                                     <Text fontSize='0.8rem'>register</Text>
                                 </Button>
@@ -98,7 +98,7 @@ const OwnerView = () => {
 
                         <Box w='50%' textAlign='left'>
 
-                            <Text as='b' paddingLeft='1rem' fontSize='sm' color='#3e3f42'>DISTRIBUTOR ({distributorCount})</Text>
+                            <Text as='b' paddingLeft='1rem' fontSize='sm' color='#3e3f42'>Concessionnaire ({distributorCount})</Text>
 
                             <Box w='100%' marginTop='0.5rem' paddingRight='2rem' overflow='scroll' maxHeight='20rem'>
 
@@ -106,11 +106,8 @@ const OwnerView = () => {
                                     <Table size='sm' w='100%'>
                                         <Tbody>
                                             {
-
                                                 distributorCount > 0 ? distributorAddress.map((distributorAddress) => {
-
                                                     const shorten = distributorAddress;
-
                                                     return <Tr key={ shorten }>
                                                         <Td>
                                                             <Flex>
@@ -118,13 +115,9 @@ const OwnerView = () => {
                                                                     <Text as='samp'><b>{ getEthAddressStart(shorten) }</b></Text>
                                                                     <Text as='samp'>{ getEthAddressMiddle(shorten) }</Text>
                                                                     <Text as='samp'><b>{ getEthAddressEnd(shorten) }</b></Text>
-                                                                    {
-                                                                        (shorten === ownerAddress) && (
-
+                                                                    {(shorten === ownerAddress) && (
                                                                             <Badge colorScheme='purple' marginLeft='0.5rem'>Owner</Badge>
-
-                                                                        )
-                                                                    }
+                                                                    )}
                                                                 </Center>
                                                                 <Spacer />
                                                                 <Center>
@@ -132,17 +125,19 @@ const OwnerView = () => {
                                                                         <CopyIcon />
                                                                     </Button>
                                                                 </Center>
+                                                                <Center>
+                                                                    <Button marginLeft='1.5rem' size='xs' colorScheme='gray' variant='ghost' onClick={ () => copyToClipboard(distributorAddress) }>
+                                                                        <DeleteIcon />
+                                                                    </Button>
+                                                                </Center>
                                                             </Flex>
                                                         </Td>
                                                     </Tr>
-
-
                                                 }) : (
-
                                                     <Tr>
                                                         <Td>
                                                             <Center>
-                                                                <Text fontSize='0.9rem'>There is no registered distributor yet</Text>
+                                                                <Text fontSize='0.9rem'>Aucun concessionaire est enregistré</Text>
                                                             </Center>
                                                         </Td>
                                                     </Tr>
