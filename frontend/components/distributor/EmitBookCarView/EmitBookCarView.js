@@ -60,7 +60,7 @@ const EmitBookCarView = () => {
     const getImage = async () => {
         const blob = dataURLtoBlob(carPhoto);
         console.log(blob)
-        return new File([blob], 'picutre', { type: blob.type });
+        return new File([blob], idToken, { type: blob.type });
     };
     
     // Helper function to convert data URL to Blob
