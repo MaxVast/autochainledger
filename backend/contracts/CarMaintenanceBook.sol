@@ -111,7 +111,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// @param _to The address to which the NFT will be sent.
     /// @param _idToken The identifier for the token.
     /// @param _uri The URI associated with the token.
-    function safeMint(address _to, uint256 _idToken, string calldata _uri) public onlyDistributor {
+    function safeMint(address _to, uint256 _idToken, string calldata _uri) external onlyDistributor {
         require(!claimedTokens[_idToken], "Token already claimed");
         tokenData[_idToken].uri = _uri;
         tokenData[_idToken].locked = true;
@@ -126,14 +126,14 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// @dev NFTs assigned to the zero address are considered invalid, and queries
     /// about them do throw.
     /// @param _idToken The identifier for an NFT.
-    function locked(uint256 _idToken) external view tokenIsExists(_idToken) returns  (bool)  {
+    function locked(uint256 _idToken) external view tokenIsExists(_idToken) returns (bool)  {
         return tokenData[_idToken].locked;
     }
 
     /// @notice Unlocks an NFT, allowing it to be transferred.
     /// @dev Only distributors can unlock tokens.
     /// @param _idToken The identifier for an NFT.
-    function unlockToken(uint256 _idToken) public onlyDistributor tokenIsExists(_idToken) {
+    function unlockToken(uint256 _idToken) external onlyDistributor tokenIsExists(_idToken) {
         tokenData[_idToken].locked = false;
         emit Unlocked(_idToken);
     }
@@ -163,7 +163,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// @notice Generates a unique token ID based on the provided VIN.
     /// @dev The VIN (Vehicle Identification Number) is used to generate a unique ID.
     /// @param _vin The Vehicle Identification Number.
-    function generateTokenId(string calldata _vin) public pure returns (uint256) {
+    function generateTokenId(string calldata _vin) external pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(_vin)));
     }
 
