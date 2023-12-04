@@ -2,14 +2,23 @@
 //REACT
 import {useEffect, useState} from 'react';
 // Chakra UI
-import { Box, Text, Button, Table, Thead, Tbody, Tr, Th, Td, Center, TableContainer } from '@chakra-ui/react';
+import { Flex, Box, Text, Button, Table, Thead, Tbody, Tr, Th, Td, Center, TableContainer } from '@chakra-ui/react';
+//Constant
 import { contractAbiCarMaintenanceBook, contractAddressCarMaintenanceBook } from '@/constants/index'
-
+//WAGMI
 import { readContract } from '@wagmi/core'
+//HOOKS
+import useCarMaintenanceBook from "@/hooks/useCarMaintenanceBook";
 
-const DetailView = ({ selectedToken, onClose }) => {
+const DetailView = ({ selectedToken, onClose, setActivePath }) => {
+    /* State & Context */
+    const { isDistributor } = useCarMaintenanceBook()
     const [ lengthMaintenance, setLengthMaintenance ] = useState(0)
     const [ maintenanceHistory, setMaintenanceHistory ] = useState([])
+
+    const handleAddMaintenance = () => {
+        setActivePath('add-maintenance-by-detailview');
+    };
 
     const getLengthMaintenance = async () => {
         try {
@@ -36,7 +45,6 @@ const DetailView = ({ selectedToken, onClose }) => {
             });
             console.log(historys)
             for(let history of historys){
-                console.log(history)
                  // Créez un nouvel objet Date en utilisant le timestamp
                  let dateNumber = Number(history.dateMaintenance) * 1000
                  let date = new Date(dateNumber);
@@ -47,7 +55,6 @@ const DetailView = ({ selectedToken, onClose }) => {
                 let day = ('0' + date.getUTCDate()).slice(-2); // Ajoutez un zéro devant le jour si nécessaire
                 // Formatez la date comme "dd/mm/yy"
                 let formattedDate = day + '/' + month + '/' + year;
-                console.log(formattedDate)
                  fetchedMaintenance.push({
                      dateMaintenance: formattedDate,
                      mileage: history.mileage,
@@ -55,7 +62,6 @@ const DetailView = ({ selectedToken, onClose }) => {
                      description: history.description
                  })
             }
-            
             setMaintenanceHistory(fetchedMaintenance)
         } catch (err) {
             console.log(err)
@@ -68,17 +74,23 @@ const DetailView = ({ selectedToken, onClose }) => {
     }, [selectedToken])
 
     return (
-        <Box margin={6}>
-            <Button colorScheme="teal" onClick={onClose}>
-                Fermer les détails
-            </Button>
+        <Box margin={4} padding={3} borderWidth="1px" borderRadius="lg">
+            <Flex align="center" justify="end" margin={2}>
+                <Button colorScheme="teal" onClick={onClose}>
+                    Fermer les détails
+                </Button>
+            </Flex>
 
             <Box mt={4}>
-                <Text>ID du token: {selectedToken.id.toString()}</Text>
+                <Text>ID: {selectedToken.id.toString()}</Text>
                 <Text>Propriétaire: {selectedToken.owner}</Text>
             </Box>
-
-            <Box mt={4} overflow='scroll'>
+            {isDistributor && (
+                <Button colorScheme="teal" onClick={handleAddMaintenance} mt={4}>
+                    Ajouter Maintenance
+                </Button>
+            )}
+            <Box mt={4}>
                 <Text fontWeight="bold">Maintenances associées:</Text>
                 <TableContainer w='100%'>
                     <Table size='sm' w='100%' alignItems='center'>
