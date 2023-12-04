@@ -4,19 +4,16 @@ import {useState} from 'react'
 // CONTEXT
 import useCarMaintenanceBook from '@/hooks/useCarMaintenanceBook'
 // Chackra UI
-import { CopyIcon } from '@chakra-ui/icons'
-import { Box, SimpleGrid, Text, Image, Flex, Badge, Button } from '@chakra-ui/react'
+import { Box, SimpleGrid, Text, Image, Flex, Badge } from '@chakra-ui/react'
 //COMPONENT
 import DetailView from '@/components/maintenance/DetailView/DetailView'
 
 const ListBookCar = () => {
     /* State & Context */
-    const { userAddress, tokens, idsToken } = useCarMaintenanceBook()
+    const { userAddress, tokens } = useCarMaintenanceBook()
     const [selectedTokenId, setSelectedTokenId] = useState(null);
     const selectedToken = tokens.find((token) => token.id === selectedTokenId);
-    console.log(userAddress)
-    console.log(tokens)
-    console.log(idsToken)
+
     const handleCardClick = (tokenId) => {
         setSelectedTokenId(tokenId);
     };
