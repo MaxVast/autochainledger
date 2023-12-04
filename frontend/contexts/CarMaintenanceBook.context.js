@@ -87,8 +87,6 @@ const CarMaintenanceBookContextProvider = ({children}) => {
 
      // Fetch unfetched token Nft details
      const fetchDetailedNfts = async () => {
-        
-        if (!state.isDistributor) return;
 
         if (state.idsToken.length <= 0) return;
     
@@ -148,24 +146,14 @@ const CarMaintenanceBookContextProvider = ({children}) => {
     }
 
     useEffect(() => {
-
-        if (!state.isDistributor) return;
         if (state.idsToken.length > 0) fetchDetailedNfts();
 
     }, [state.isDistributor]);
 
     useEffect(() => {
-
-        if (!state.isDistributor) return;
         if (state.idsToken.length > 0) fetchDetailedNfts();
 
     }, [state.idsToken]);
-
-    useEffect(() => {
-
-        if (!state.isDistributor) return;
-        fetchDetailedNfts();
-    }, [state.isDistributor]);
 
     // When the user connection state or address changes checks if the user is the admin or not
     useEffect( () => {
