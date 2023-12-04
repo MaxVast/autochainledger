@@ -18,7 +18,7 @@ const OwnerPage = () => {
             ) : (
                 <Card paddingTop='1rem' marginTop='2rem' marginBottom='2.5rem'>
                     <CardHeader>
-                        <Heading size='md'>Distributor Space</Heading>
+                        <Heading size='md'>Espace Administrateur</Heading>
                     </CardHeader>
             
                     <CardBody>
@@ -28,15 +28,15 @@ const OwnerPage = () => {
                                 Message
                             </Heading>
                             <Text pt='2' fontSize='sm'>
-                                You're not identified as Distributor
+                                Vous n'êtes pas identifié comme administrateur
                             </Text>
                             </Box>
                             <Box>
                             <Heading size='xs' textTransform='uppercase'>
-                                What to do ?
+                                Ce qu'il faut faire ?
                             </Heading>
                             <Text pt='2' fontSize='sm'>
-                                Please <b>login as Distributor</b> or go to the <b><Link href="/" color='#0e76fd'>Home</Link></b> space
+                                Veuillez <b>vous connecter en tant qu'administrateur</b> ou rendez-vous sur la page <b><Link href="/" color='#0e76fd'>Home</Link></b>
                             </Text>
                             </Box>
                         </Stack>
