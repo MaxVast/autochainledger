@@ -5,7 +5,7 @@ import { Flex, Spacer, Heading, Box, Text, Center, Image } from '@chakra-ui/reac
 import Link from "next/link"
 import useCarMaintenanceBook from "@/hooks/useCarMaintenanceBook"
 
-const Header = ({ path }) => {
+const Header = () => {
     /* State & Context */
     const { isUserOwner, isDistributor } = useCarMaintenanceBook()
     return (
@@ -28,7 +28,7 @@ const Header = ({ path }) => {
                     {isUserOwner && (
                         <Link href="/admin">
                             <Text cursor="pointer" fontWeight="bold" mx="2">
-                                Espace Admin
+                                Espace Administrateur
                             </Text>
                         </Link>
                     )}
@@ -36,7 +36,7 @@ const Header = ({ path }) => {
                     {isDistributor && (
                         <Link href="/distributor">
                             <Text cursor="pointer" fontWeight="bold" mx="2">
-                                Espace Distributor
+                                Espace Concessionnaire
                             </Text>
                         </Link>
                     )}
