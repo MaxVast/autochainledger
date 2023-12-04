@@ -12,19 +12,31 @@ const DistributorPage = () => {
      /* State & Context */
      const { isDistributor } = useCarMaintenanceBook()
      const [activePath, setActivePath] = useState('');
+     const [selectedToken, setSelectedToken] = useState(null);
+
+    const handleSetActivePath = (path) => {
+        setActivePath(path);
+    };
+
+    const handleSelectedTokenChange = (tokenId) => {
+        setSelectedToken(tokenId);
+    };
 
     const renderDistributorActionComponent = () => {
         if (activePath === 'emit-book') {
             return <EmitBookCarView />
         }
+        else if (activePath === 'add-maintenance-by-detailview') {
+            return <AddMaintencance selectedToken={selectedToken} />
+        }
         else if (activePath === 'add-maintenance') {
-            return <AddMaintencance />
+            return <AddMaintencance selectedToken={null} />
         }
         else if (activePath === 'transfer-book') {
             return <></>
         }
         else {
-            return <ListBookCarView />
+            return <ListBookCarView setActivePath={handleSetActivePath} onSelectedTokenChange={handleSelectedTokenChange} />
         }
     }
     return (
@@ -51,7 +63,7 @@ const DistributorPage = () => {
                             color={activePath === 'emit-book' ? 'blue.500' : 'white'}
                             mr="4"
                         >
-                            Emit a maintenance book
+                            Délivrer un carnet
                         </Text>
                         <Text
                             fontSize="lg"
@@ -61,7 +73,7 @@ const DistributorPage = () => {
                             color={activePath === 'add-maintenance' ? 'blue.500' : 'white'}
                             mr="4"
                         >
-                            Add maintenance
+                            Ajouter une maintenance
                         </Text>
                         <Text
                             fontSize="lg"
@@ -70,7 +82,7 @@ const DistributorPage = () => {
                             onClick={() => setActivePath('transfer-book')}
                             color={activePath === 'transfer-book' ? 'blue.500' : 'white'}
                         >
-                            Transfer a book
+                            Transferer un carnet
                         </Text>
                     </Flex>
                     { renderDistributorActionComponent() }
@@ -85,7 +97,7 @@ const DistributorPage = () => {
             ) : (
                 <Card paddingTop='1rem' marginTop='2rem' marginBottom='2.5rem'>
                     <CardHeader>
-                        <Heading size='md'>Distributor Space</Heading>
+                        <Heading size='md'>Espace concessionnaire</Heading>
                     </CardHeader>
             
                     <CardBody>
@@ -95,15 +107,15 @@ const DistributorPage = () => {
                                 Message
                             </Heading>
                             <Text pt='2' fontSize='sm'>
-                                You're not identified as Distributor
+                                Vous n'êtes pas identifié comme concessionnaire
                             </Text>
                             </Box>
                             <Box>
                             <Heading size='xs' textTransform='uppercase'>
-                                What to do ?
+                                Ce qu'il faut faire ?
                             </Heading>
                             <Text pt='2' fontSize='sm'>
-                                Please <b>login as Distributor</b> or go to the <b><Link href="/" color='#0e76fd'>Home</Link></b> space
+                                Veuillez <b>vous connecter en tant que concessionnaire</b> ou rendez-vous sur la page <b><Link href="/" color='#0e76fd'>Home</Link></b>
                             </Text>
                             </Box>
                         </Stack>
