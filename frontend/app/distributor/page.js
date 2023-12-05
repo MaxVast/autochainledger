@@ -10,7 +10,7 @@ import AddMaintencance from '@/components/distributor/AddMaintenance/AddMaintenc
 
 const DistributorPage = () => {
      /* State & Context */
-     const { isDistributor } = useCarMaintenanceBook()
+     const { isDistributor, isUserOwner } = useCarMaintenanceBook()
      const [activePath, setActivePath] = useState('');
      const [selectedToken, setSelectedToken] = useState(null);
 
@@ -42,7 +42,7 @@ const DistributorPage = () => {
     return (
         <>
             <Header path='/distributor' />
-            {isDistributor ? (
+            {(isDistributor || isUserOwner) ? (
                 <> 
                     <Flex bg="gray.800" color="white" p="4" alignItems="center">
                         <Text
