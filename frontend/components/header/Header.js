@@ -23,25 +23,27 @@ const Header = () => {
                         </Link>
                     </Heading>
                 </Box>
-                
+
                 <Box>
-                    {isUserOwner && (
-                        <Link href="/admin">
-                            <Text cursor="pointer" fontWeight="bold" mx="2">
-                                Espace Administrateur
-                            </Text>
-                        </Link>
-                    )}
-                    
-                    {isDistributor && (
-                        <Link href="/distributor">
-                            <Text cursor="pointer" fontWeight="bold" mx="2">
-                                Espace Concessionnaire
-                            </Text>
-                        </Link>
-                    )}
+                    <Flex alignItems="center">
+                        {(isDistributor || isUserOwner) && (
+                            <Link href="/distributor">
+                                <Text cursor="pointer" fontWeight="bold" mx="2">
+                                    Espace Concessionnaire
+                                </Text>
+                            </Link>
+                        )}
+
+                        {isUserOwner && (
+                            <Link href="/admin">
+                                <Text cursor="pointer" fontWeight="bold" mx="2">
+                                    Espace Administrateur
+                                </Text>
+                            </Link>
+                        )}
+                    </Flex>
                 </Box>
-                
+
                 <Spacer />
                 
                 <Box>
