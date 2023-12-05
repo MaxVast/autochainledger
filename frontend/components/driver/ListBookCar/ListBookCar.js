@@ -1,10 +1,10 @@
 "use client"
 // REACT
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 // CONTEXT
 import useCarMaintenanceBook from '@/hooks/useCarMaintenanceBook'
 // Chackra UI
-import { Box, SimpleGrid, Text, Image, Flex, Badge } from '@chakra-ui/react'
+import {Box, SimpleGrid, Text, Image, Flex, Badge, Center} from '@chakra-ui/react'
 //COMPONENT
 import DetailView from '@/components/maintenance/DetailView/DetailView'
 
@@ -12,6 +12,7 @@ const ListBookCar = () => {
     /* State & Context */
     const { userAddress, tokens } = useCarMaintenanceBook()
     const [selectedTokenId, setSelectedTokenId] = useState(null);
+    const [userTokens, setUserTokens] = useState([]);
     const selectedToken = tokens.find((token) => token.id === selectedTokenId);
 
     const handleCardClick = (tokenId) => {
@@ -22,14 +23,19 @@ const ListBookCar = () => {
         setSelectedTokenId(null);
     };
 
+    useEffect(() => {
+        const tokensUser = tokens.filter((token) => token.owner === userAddress);
+        setUserTokens(tokensUser);
+    }, [tokens, userAddress]);
+
     return (
         <>
             {selectedTokenId ? (
                 <DetailView selectedToken={selectedToken} onClose={handleCloseDetails} />
             ) : (
-                <SimpleGrid columns={2} spacing={4} margin={4}>
-                    {tokens.map((token) => (
-                        token.owner === userAddress && (
+                (userTokens.length > 0) ? (
+                    <SimpleGrid columns={2} spacing={4} margin={4}>
+                        {userTokens.map((token) => (
                             <Box key={token.id} borderWidth="1px" borderRadius="lg">
                                 <Box onClick={() => handleCardClick(token.id)} cursor="pointer">
                                     <Image src={token.image} alt={`Car ${token.id}`} maxWidth="250px" loading="lazy" />
@@ -52,9 +58,15 @@ const ListBookCar = () => {
                                     </Box>
                                 </Box>
                             </Box>
-                        )
-                    ))}
-                </SimpleGrid>
+                        ))}
+                    </SimpleGrid>
+                ) : (
+                    <>
+                        <Center>
+                            <Text>Vous n'avez aucun carnet de véhicule venant de chez nous</Text>
+                        </Center>
+                    </>
+                )
             )}
         </>
     )
