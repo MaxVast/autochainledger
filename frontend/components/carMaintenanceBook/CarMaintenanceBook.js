@@ -26,22 +26,20 @@ const CarMaintenanceBook = () => {
                             {isDistributor ? (
                                 <>
                                     <Flex direction="column" width='100%'>
-                                    <Center>
-                                        <h1>Concessionnaire connecté</h1>
-                                    </Center>
+                                        <Center>
+                                            <h1>Concessionnaire connecté</h1>
+                                        </Center>
                                         <Text>Bienvenue</Text>
                                     </Flex>
                                 </>
                             ) : (
                                 <>
-                                    {isVehicleOwner ? (
-                                        <>
-                                            <h1>User with NFT vehicle connected</h1>
-                                            <ListBookCar />
-                                        </>
-                                    ) : (
-                                        <h1>Not connected</h1>
-                                    )}
+                                    <Flex direction="column" width='100%'>
+                                        <Center>
+                                            <h1>Utilisateur connecté</h1>
+                                        </Center>
+                                        <ListBookCar />
+                                    </Flex>
                                 </>
                             )}
                         </>
