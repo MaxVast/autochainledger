@@ -56,6 +56,12 @@ describe("CarMaintenanceLoyalty Test", function () {
         .withArgs(admin.address);
     });
 
+    it("should not add an admin if is already added", async function () {
+      await erc20Contract.addAdmins(admin.address);
+      await expect(erc20Contract.addAdmins(admin.address))
+          .to.be.rejectedWith(erc20Contract, "Admin already registered");
+    });
+
     it("should not remove an admin if it's not owner", async function () {
       await erc20Contract.addAdmins(admin.address);
       await expect(erc20Contract.connect(user).removeAdmins(admin.address))
@@ -68,6 +74,13 @@ describe("CarMaintenanceLoyalty Test", function () {
       await expect(erc20Contract.removeAdmins(admin.address))
         .to.emit(erc20Contract, 'AdminRemoved')
         .withArgs(admin.address);
+    });
+
+    it("should not add an admin if is already added", async function () {
+      await erc20Contract.addAdmins(admin.address);
+      await erc20Contract.removeAdmins(admin.address)
+      await expect(erc20Contract.removeAdmins(admin.address))
+          .to.be.rejectedWith(erc20Contract, "Admin already removed");
     });
   })
 
