@@ -65,6 +65,10 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// @param DistributorAddress The address of the registered distributor.
     event DistributorRegistered(address indexed DistributorAddress);
 
+    /// @notice Event emitted when an distributor is removed.
+    /// @param _distributor The address of the removed distributor.
+    event DistributorRemoved(address indexed _distributor);
+
     /// @notice Modifier to ensure that only distributors can execute certain functions.
     modifier onlyDistributor() {
         require(distributors[msg.sender], "Not a distributor");
@@ -97,6 +101,15 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
         require(!distributors[_distributor], "Distributor is already registered");
         distributors[_distributor] = true;
         emit DistributorRegistered(_distributor);
+    }
+
+    /// @notice Removes an distributor with the specified address
+    /// @dev Only the owner can remove distributors
+    /// @param _distributor The address of the distributor to be removed
+    function removeDistributor(address _distributor) external onlyOwner {
+        require(distributors[_distributor], "Distributor is already remove");
+        distributors[_distributor] = false;
+        emit DistributorRemoved(_distributor);
     }
 
     /// @notice Sets the ERC20 cagnotte token address.
