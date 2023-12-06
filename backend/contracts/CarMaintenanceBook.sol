@@ -67,7 +67,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
 
     /// @notice Modifier to ensure that only distributors can execute certain functions.
     modifier onlyDistributor() {
-        require(msg.sender == owner() || distributors[msg.sender], "Not a distributor");
+        require(distributors[msg.sender], "Not a distributor");
         _;
     }
 
