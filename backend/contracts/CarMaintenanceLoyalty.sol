@@ -58,7 +58,7 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     /// @dev Only the owner can remove administrators
     /// @param _admin The address of the administrator to be removed
     function removeAdmins(address _admin) external onlyOwner {
-        require(admins[_admin], "Admin already remove");
+        require(admins[_admin], "Admin already removed");
         admins[_admin] = false;
         emit AdminRemoved(_admin);
     }
