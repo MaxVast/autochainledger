@@ -49,7 +49,7 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     /// @dev Only the owner can add administrators
     /// @param _admin The address of the administrator to be added
     function addAdmins(address _admin) external onlyOwner {
-        require(!admins[msg.sender], "Admin already registered");
+        require(!admins[_admin], "Admin already registered");
         admins[_admin] = true;
         emit AdminAdded(_admin);
     }
@@ -58,7 +58,7 @@ contract CarMaintenanceLoyalty is ERC20, Ownable {
     /// @dev Only the owner can remove administrators
     /// @param _admin The address of the administrator to be removed
     function removeAdmins(address _admin) external onlyOwner {
-        require(admins[msg.sender], "Admin already remove");
+        require(admins[_admin], "Admin already remove");
         admins[_admin] = false;
         emit AdminRemoved(_admin);
     }
