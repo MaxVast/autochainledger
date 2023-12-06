@@ -107,7 +107,7 @@ contract CarMaintenanceBook is ERC721, Ownable, IERC5192 {
     /// @dev Only the owner can remove distributors
     /// @param _distributor The address of the distributor to be removed
     function removeDistributor(address _distributor) external onlyOwner {
-        require(distributors[_distributor], "Distributor is already remove");
+        require(distributors[_distributor], "Distributor is already removed");
         distributors[_distributor] = false;
         emit DistributorRemoved(_distributor);
     }
