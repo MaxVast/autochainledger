@@ -121,6 +121,27 @@ describe("CarMaintenanceBook Test", function () {
             await expect(maintenanceContract.connect(owner).setDistributor(distributor.address))
                 .to.be.rejectedWith(maintenanceContract, "Distributor is already registered");
         });
+
+        it("should remove an distributor", async function () {
+            await maintenanceContract.connect(owner).setDistributor(distributor.address);
+            await expect(maintenanceContract.connect(owner).removeDistributor(distributor.address))
+                .to.emit(maintenanceContract, 'DistributorRemoved')
+                .withArgs(distributor.address);
+        });
+
+        it("should not remove an distributor already removed", async function () {
+            await maintenanceContract.connect(owner).setDistributor(distributor.address);
+            await maintenanceContract.connect(owner).removeDistributor(distributor.address);
+            await expect(maintenanceContract.connect(owner).removeDistributor(distributor.address))
+                .to.be.rejectedWith(maintenanceContract, "Distributor is already removed");
+        });
+
+        it("should not remove an distributor if you are not the owner", async function () {
+            await maintenanceContract.connect(owner).setDistributor(distributor.address);
+            await expect(maintenanceContract.connect(user).removeDistributor(distributor.address))
+                .to.be.revertedWithCustomError(maintenanceContract, "OwnableUnauthorizedAccount")
+                .withArgs(user.address);
+        });
     })
 
     describe("Check mint NFT and Maintenance", () => {
@@ -142,7 +163,7 @@ describe("CarMaintenanceBook Test", function () {
             const tokenExists = await maintenanceContract.ownerOf(hash);
             // Check token properties
             const lockedStatus = await maintenanceContract.locked(hash);
-            const tokenURI = await maintenanceContract.getTokenURI(hash);
+            const tokenURI = await maintenanceContract.tokenURI(hash);
             // Check cagnotte balance
             const cagnotteBalance = await erc20Contract.totalTokens(user.address);
             // Assertions
@@ -153,7 +174,7 @@ describe("CarMaintenanceBook Test", function () {
         });
 
         it("should not get token URI if the token doesnt exists", async function () {
-            await expect(maintenanceContract.connect(user).getTokenURI(hash))
+            await expect(maintenanceContract.connect(user).tokenURI(hash))
                 .to.be.rejectedWith(maintenanceContract, "Token not exists");
         });
 
