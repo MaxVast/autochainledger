@@ -27,11 +27,15 @@ const ListBookCarView = ({setActivePath, onSelectedTokenChange}) => {
     const handleSetActivePath = () => {
         setActivePath('add-maintenance-by-detailview');
     };
+
+    const handleSetPathTransfer = () => {
+        setActivePath('transfer-book-idToken');
+    };
     
     return (
         <>
             {selectedTokenId ? (
-                <DetailView selectedToken={selectedToken} onClose={handleCloseDetails} setActivePath={handleSetActivePath} />
+                <DetailView selectedToken={selectedToken} onClose={handleCloseDetails} setActivePath={handleSetActivePath} setPathTransfer={handleSetPathTransfer} />
             ) : (
                 (tokens.length > 0) ? (
                     <SimpleGrid columns={2} spacing={4} margin={4}>
