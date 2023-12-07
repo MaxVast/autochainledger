@@ -14,7 +14,11 @@ Maxence VAST
 ## Détails
 
 ### Contract
+Le contrat CarMaintenanceBook est un contrat ERC721 basé sur OpenZeppelin, permettant de créer et gérer des NFT représentant des historiques d'entretien de véhicules. Les distributeurs peuvent créer, transférer, et déverrouiller ces NFT, tandis que les utilisateurs peuvent réclamer des récompenses en tokens ERC20 (CarMaintenanceLoyalty) pour leurs actions. Le contrat maintient un historique d'entretien pour chaque NFT, récompensant les utilisateurs et distribuant des tokens en fonction des actions effectuées.
 
+Le contrat CarMaintenanceLoyalty est un ERC20 gérant un programme de fidélité de tokens pour l'entretien de véhicules. Les administrateurs peuvent créditer et livrer des tokens aux utilisateurs, et les utilisateurs peuvent accumuler des tokens en fonction de leurs actions. Les tokens peuvent être crédités à un pool de récompenses et livrés aux utilisateurs. Le contrat offre une fonctionnalité de gestion des administrateurs pour ajouter ou supprimer des privilèges administratifs.
+
+Le contrat d'interface IERC5192 définit des événements et des fonctions pour gérer l'état de verrouillage des Soulbound Tokens (SBT). Les événements "Locked" et "Unlocked" sont émis lorsqu'un SBT est verrouillé ou déverrouillé, respectivement. La fonction "locked" permet de vérifier l'état de verrouillage d'un SBT en fonction de son identifiant.
 
 ### Front
 Voici la liste de la stack utilisée pour la réalisation du projet.
