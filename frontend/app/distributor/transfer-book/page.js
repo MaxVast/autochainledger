@@ -1,11 +1,9 @@
-import AddMaintencance from '@/components/distributor/AddMaintenance/AddMaintencance'
 import React from 'react'
+import TransferBookCar from "@/components/distributor/TransferBookCarView/TransferBookCarView";
 
 const page = () => {
   return (
-    <>
-        <AddMaintencance />
-    </>
+    <TransferBookCar />
   )
 }
 
