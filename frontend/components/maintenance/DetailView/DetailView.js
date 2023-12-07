@@ -10,15 +10,19 @@ import { readContract } from '@wagmi/core'
 //HOOKS
 import useCarMaintenanceBook from "@/hooks/useCarMaintenanceBook";
 
-const DetailView = ({ selectedToken, onClose, setActivePath }) => {
+const DetailView = ({ selectedToken, onClose, setActivePath, setPathTransfer }) => {
     /* State & Context */
-    const { isDistributor } = useCarMaintenanceBook()
+    const { isDistributor, isUserOwner } = useCarMaintenanceBook()
     const [ lengthMaintenance, setLengthMaintenance ] = useState(0)
     const [ maintenanceHistory, setMaintenanceHistory ] = useState([])
 
     const handleAddMaintenance = () => {
         setActivePath('add-maintenance-by-detailview');
     };
+
+    const handleTransfer = () => {
+        setPathTransfer('transfer-book-idToken');
+    }
 
     const getLengthMaintenance = async () => {
         try {
@@ -85,10 +89,15 @@ const DetailView = ({ selectedToken, onClose, setActivePath }) => {
                 <Text>ID: {selectedToken.id.toString()}</Text>
                 <Text>Propriétaire: {selectedToken.owner}</Text>
             </Box>
-            {isDistributor && (
-                <Button colorScheme="teal" onClick={handleAddMaintenance} mt={4}>
-                    Ajouter Maintenance
-                </Button>
+            {(isDistributor || isUserOwner) && (
+                <Flex>
+                    <Button colorScheme="teal" onClick={handleAddMaintenance} mt={4} mr={1}>
+                        Ajouter Maintenance
+                    </Button>
+                    <Button colorScheme="teal" onClick={handleTransfer} mt={4}>
+                        Transferer le carnet
+                    </Button>
+                </Flex>
             )}
             <Box mt={4}>
                 <Text fontWeight="bold">Maintenances associées:</Text>
