@@ -7,6 +7,7 @@ import { Box, Button, Card, CardBody, CardHeader, Flex, Heading, Stack, StackDiv
 import Link from 'next/link';
 import EmitBookCarView from '@/components/distributor/EmitBookCarView/EmitBookCarView'
 import AddMaintencance from '@/components/distributor/AddMaintenance/AddMaintencance'
+import TransferBookCar from "@/components/distributor/TransferBookCarView/TransferBookCarView";
 
 const DistributorPage = () => {
      /* State & Context */
@@ -32,8 +33,11 @@ const DistributorPage = () => {
         else if (activePath === 'add-maintenance') {
             return <AddMaintencance selectedToken={null} />
         }
+        else if (activePath === 'transfer-book-idToken') {
+            return <TransferBookCar selectedToken={selectedToken} />
+        }
         else if (activePath === 'transfer-book') {
-            return <></>
+            return <TransferBookCar selectedToken={null} />
         }
         else {
             return <ListBookCarView setActivePath={handleSetActivePath} onSelectedTokenChange={handleSelectedTokenChange} />
