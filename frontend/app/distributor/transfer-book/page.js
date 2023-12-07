@@ -1,8 +1,11 @@
+import AddMaintencance from '@/components/distributor/AddMaintenance/AddMaintencance'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <>
+        <AddMaintencance />
+    </>
   )
 }
 
