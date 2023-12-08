@@ -7,14 +7,13 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { infuraProvider } from '@wagmi/core/providers/infura';
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { hardhat, sepolia } from 'wagmi/chains';
 import {CarMaintenanceBookContextProvider} from "@/contexts/CarMaintenanceBook.context";
 
 const { chains, publicClient } = configureChains(
-    [/*sepolia,*/ hardhat],
-    [/*alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),*/ publicProvider()]
+    [process.env.NEXT_PUBLIC_ENV === 'dev' ? hardhat : sepolia ],
+    [alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }), publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
