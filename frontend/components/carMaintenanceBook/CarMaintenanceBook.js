@@ -1,7 +1,7 @@
 "use client"
 
 import useCarMaintenanceBook from "@/hooks/useCarMaintenanceBook";
-import { Center, Flex, Text } from "@chakra-ui/react";
+import { Box, Center, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import ListBookCar from "@/components/driver/ListBookCar/ListBookCar";
 
 const CarMaintenanceBook = () => {
@@ -14,29 +14,39 @@ const CarMaintenanceBook = () => {
                 {isUserConnected ? (
                     isUserOwner ? (
                         <>
-                            <Flex direction="column" width='100%'>
+                            <Flex direction="column" width='100%' p={4}>
                                 <Center>
-                                    <h1>Administrateur connecté</h1>
+                                    <Heading mb="4">Administrateur connecté</Heading>
                                 </Center>
                                 <Text>Bienvenue</Text>
+                            </Flex>
+                            <Flex direction="column" width='100%'>
+                                <Box>
+                                    <Image src='image.png' alt='AutoChain Ledger' loading="lazy" /> 
+                                </Box>
                             </Flex>
                         </>
                     ) : (
                         <>
                             {isDistributor ? (
                                 <>
-                                    <Flex direction="column" width='100%'>
+                                    <Flex direction="column" width='100%' p={4}>
                                         <Center>
-                                            <h1>Concessionnaire connecté</h1>
+                                            <Heading mb="4">Concessionnaire connecté</Heading>
                                         </Center>
                                         <Text>Bienvenue</Text>
+                                    </Flex>
+                                    <Flex direction="column" width='100%'>
+                                        <Box>
+                                            <Image src='image.png' alt='AutoChain Ledger' loading="lazy" /> 
+                                        </Box>
                                     </Flex>
                                 </>
                             ) : (
                                 <>
                                     <Flex direction="column" width='100%'>
                                         <Center>
-                                            <h1>Utilisateur connecté</h1>
+                                            <Heading mb="4">Utilisateur connecté</Heading>
                                         </Center>
                                         <ListBookCar />
                                     </Flex>
@@ -44,7 +54,19 @@ const CarMaintenanceBook = () => {
                             )}
                         </>
                     )) : (
-                        <h1>Vous n'êtes pas connecté</h1>
+                        <>
+                            <Flex direction="column" width='100%' p={4}>
+                                <Center>
+                                    <Text>Bienvenue sur Autochain Ledger</Text>
+                                </Center>
+                            </Flex>
+
+                            <Flex direction="column" width='100%' p={4}>
+                                <Box>
+                                    <Image src='image.png' alt='AutoChain Ledger' loading="lazy" /> 
+                                </Box>
+                            </Flex>
+                        </>
                     )
                 }
             </Flex>

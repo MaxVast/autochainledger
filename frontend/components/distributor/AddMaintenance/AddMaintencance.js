@@ -66,7 +66,7 @@ const AddMaintencance = ({selectedToken}) => {
             const { hash } = await writeContract(request);
             toast({
                 title: 'In transaction.',
-                description: "Registration in progress",
+                description: "Enregistrement en cours",
                 status: 'info',
                 duration: 4000,
                 isClosable: true,
@@ -74,7 +74,7 @@ const AddMaintencance = ({selectedToken}) => {
             const data = await waitForTransaction({hash: hash})
             toast({
                 title: 'Congratulations.',
-                description: "You have added a maintenance !",
+                description: "Vous avez ajouté une maintenance !",
                 status: 'success',
                 duration: 4000,
                 isClosable: true,

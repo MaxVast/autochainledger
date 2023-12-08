@@ -47,7 +47,6 @@ const DetailView = ({ selectedToken, onClose, setActivePath, setPathTransfer }) 
                 functionName: 'getMaintenanceHistory',
                 args: [BigInt(selectedToken.id)]
             });
-            console.log(historys)
             for(let history of historys){
                  // Créez un nouvel objet Date en utilisant le timestamp
                  let dateNumber = Number(history.dateMaintenance) * 1000

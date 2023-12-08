@@ -5,7 +5,7 @@ const carMaintenanceBookContextReducer = (state, action) => {
     if (action.type === CARMAINTENANCEBOOK_EVENTS_UPDATE_ACTION) {
         // Use a set to ensure uniqueness
         let uniqueDistributors = new Set(state.distributorAddress);
-        let uniqueVehicleOwner = new Set(state.distributorAddress);
+        let uniqueVehicleOwner = new Set(state.vehicleOwnerAddress);
         let uniqueidsToken = new Set(state.idsToken);
         // Update the state according of which event is received
         for (let log of action.payload.logs) {

@@ -45,7 +45,7 @@ const OwnerView = () => {
             const data = await waitForTransaction({hash: hash})
             toast({
                 title: 'Félécitation.',
-                    description: "Vous ajouté un concessionnaire",
+                    description: "Vous avez ajouté un concessionnaire",
                 status: 'success',
                 duration: 4000,
                 isClosable: true,

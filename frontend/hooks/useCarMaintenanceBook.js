@@ -5,7 +5,7 @@ const useCarMaintenanceBook = () => {
 
     const context = useContext(CarMaintenanceBookContext);
 
-    if (!context) throw new Error('useVoting must be used within a CarMaintenanceBookContext');
+    if (!context) throw new Error('useCarMaintenanceBook must be used within a CarMaintenanceBookContext');
 
     return context;
 }

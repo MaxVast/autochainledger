@@ -1,5 +1,4 @@
 "use client"
-const cors = require("cors");
 
 import { ChakraProvider } from '@chakra-ui/react'
 

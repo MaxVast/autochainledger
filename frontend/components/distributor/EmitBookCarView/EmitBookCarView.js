@@ -49,7 +49,8 @@ const EmitBookCarView = () => {
         // Ajoutez ici la logique pour traiter les données du formulaire
         console.log('Données du formulaire :', { ownerAddres, carPhoto, vin, selectedBrand, carModel });
         try {
-            const [idToken, tokenUri] = await Promise.all([generateIdToken(), storeNFT()]);
+            const [idToken] = await Promise.all([generateIdToken()]);
+            const [tokenUri] = await Promise.all([storeNFT(idToken)]);
             await emitNft(idToken, tokenUri)
         } catch (error) {
             // Handle errors from generateIdToken, storeNFT, or emitNft
@@ -57,10 +58,10 @@ const EmitBookCarView = () => {
         }
     };
 
-    const getImage = async () => {
+    const getImage = async (idToken) => {
         const blob = dataURLtoBlob(carPhoto);
         console.log(blob)
-        return new File([blob], idToken, { type: blob.type });
+        return new File([blob], idToken.toString(), { type: blob.type });
     };
     
     // Helper function to convert data URL to Blob
@@ -76,18 +77,17 @@ const EmitBookCarView = () => {
         return new Blob([arrayBuffer], { type: mime });
     };
 
-    const storeNFT = async () => {
+    const storeNFT = async (idToken) => {
         try {
-            const imageNft = await getImage()
-            console.log(imageNft)
+            const imageNft = await getImage(idToken)
             const nft = {
                 image: imageNft,
                 name: "NFT AutoChain Ledger",
                 description: "This NFT is the identification book on the blockchain",
                 properties: {
-                brand: selectedBrand,
-                model: carModel,
-                authors: [{ name: "Autochain Ledger" }],
+                    brand: selectedBrand,
+                    model: carModel,
+                    authors: "Autochain Ledger" ,
                 }
             }
             const clientNftStorage = new NFTStorage({ token: process.env.NEXT_PUBLIC_NFTSTORAGE_API_KEY })

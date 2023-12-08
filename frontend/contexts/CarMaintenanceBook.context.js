@@ -95,9 +95,10 @@ const CarMaintenanceBookContextProvider = ({children}) => {
         if (unfetchedTokenIds.length <= 0) return;
 
         const fetchedTokens = [];
-    
+        
         for(let ID of unfetchedTokenIds) {
             if(BigInt(ID) != 0) {
+                let newValueToken;
                 try {
                     const fetchedToken = await readContract({
                         address: contractAddressCarMaintenanceBook,
@@ -115,6 +116,14 @@ const CarMaintenanceBookContextProvider = ({children}) => {
             
                     const tokenURI = fetchedToken.slice(7)
                     const newUriToken = 'https://ipfs.io/ipfs/'+tokenURI
+                    console.log('Load data NFT : ' +ID.toString())
+                    fetchedTokens.push({
+                        id: ID,
+                        owner: ownerToken,
+                        brand: null,
+                        model: null,
+                        image: null
+                    });
                     const response = await fetch(newUriToken)
                     if (!response.ok) {
                         if (response.status === 504) {
@@ -124,25 +133,28 @@ const CarMaintenanceBookContextProvider = ({children}) => {
                         }
                         continue; // Skip to the next iteration
                     } else {
+                        console.log('Load complete data NFT : '+ID.toString())
                         const result = await response.json()
                         let linkImage = result.image.slice(7)
                         let newUriImage = 'https://ipfs.io/ipfs/'+linkImage
                 
-                        fetchedTokens.push({
+                        newValueToken = {
                             id: ID,
                             owner: ownerToken,
                             brand: result.properties.brand,
                             model: result.properties.model,
                             image: newUriImage
-                        });
+                        };
+                        
+                        fetchedTokens.pop();  
+                        fetchedTokens.push(newValueToken);
                     }
+                    setTokens([...fetchedTokens]);
                 } catch (error) {
                     console.error('Error fetching data:', error.message);
                 }
             }
-          
         }
-        setTokens([...fetchedTokens]);
     }
 
     useEffect(() => {
@@ -177,6 +189,7 @@ const CarMaintenanceBookContextProvider = ({children}) => {
     useEffect(() => {
         if (isConnected) {
             isUserTheOwner();
+            fetchDetailedNfts();
             dispatchFromEventsAction({
                 type: CARMAINTENANCEBOOK_USER_CHANGES,
                 payload: {
@@ -206,7 +219,8 @@ const CarMaintenanceBookContextProvider = ({children}) => {
             isVehicleOwner: state.isVehicleOwner,
             //ID TOKEN NFT
             idsToken: state.idsToken,
-            tokens: tokens
+            tokens: tokens,
+            fetchDetailedNfts
         }}>
             { children }
         </CarMaintenanceBookContext.Provider>
