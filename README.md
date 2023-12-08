@@ -9,7 +9,7 @@ Déployé sur sépolia : <br/>
 [CarMaintenanceBook](https://sepolia.etherscan.io/address/0x1DfaaaEc2A1d7bD7759BBB7E726263F061F7eaF4)
 
 Developpé par :  
-Maxence VAST
+Maxence VAST : 0xe79B2cc4c07dB560f8e1eE63ed407DD2DCFdE80e
 
 ## Détails
 
