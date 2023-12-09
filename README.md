@@ -27,8 +27,14 @@ Voici la liste de la stack utilisée pour la réalisation du projet.
 - Viem
 - NextJs
 - Chakra UI
+- NFT STORAGE
   <br/><br/>
 
 ### Back/Smart Contract
 Voici la liste de la stack utilisée pour la partie Smart Contract.
 - Hardhat
+- ERC721
+- IERC5192
+- ERC20
+- Librairie OpenZeppelin
+
