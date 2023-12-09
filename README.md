@@ -14,7 +14,7 @@ Maxence VAST : 0xe79B2cc4c07dB560f8e1eE63ed407DD2DCFdE80e
 ## Détails
 
 ### Contract
-Le contrat CarMaintenanceBook est un contrat ERC721 basé sur OpenZeppelin, permettant de créer et gérer des NFT représentant des historiques d'entretien de véhicules. Les distributeurs peuvent créer, transférer, et déverrouiller ces NFT, tandis que les utilisateurs peuvent réclamer des récompenses en tokens ERC20 (CarMaintenanceLoyalty) pour leurs actions. Le contrat maintient un historique d'entretien pour chaque NFT, récompensant les utilisateurs et distribuant des tokens en fonction des actions effectuées.
+Le contrat CarMaintenanceBook est un contrat ERC721 basé sur OpenZeppelin, permettant de créer et gérer des NFT (carnet d’entretient) représentant des historiques d'entretien de véhicules. Les distributeurs peuvent créer, transférer, et déverrouiller ces NFT. 
 
 Le contrat CarMaintenanceLoyalty est un ERC20 gérant un programme de fidélité de tokens pour l'entretien de véhicules. Les administrateurs peuvent créditer et livrer des tokens aux utilisateurs, et les utilisateurs peuvent accumuler des tokens en fonction de leurs actions. Les tokens peuvent être crédités à un pool de récompenses et livrés aux utilisateurs. Le contrat offre une fonctionnalité de gestion des administrateurs pour ajouter ou supprimer des privilèges administratifs.
 
