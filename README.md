@@ -10,7 +10,7 @@ Déployé sur sépolia : <br/>
 [CarMaintenanceLoyalty](https://sepolia.etherscan.io/address/0xa9dFFD8e576ea282821e762066df53ee71d3e411#code)<br/>
 [CarMaintenanceBook](https://sepolia.etherscan.io/address/0x1DfaaaEc2A1d7bD7759BBB7E726263F061F7eaF4#code)
 
-Developpé par :  
+Developpé et déployé par :  
 Maxence VAST : 0xe79B2cc4c07dB560f8e1eE63ed407DD2DCFdE80e
 
 ## Détails
