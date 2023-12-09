@@ -22,6 +22,19 @@ Le contrat CarMaintenanceLoyalty est un ERC20 gérant un programme de fidélité
 
 Le contrat d'interface IERC5192 définit des événements et des fonctions pour gérer l'état de verrouillage des Soulbound Tokens (SBT). Les événements "Locked" et "Unlocked" sont émis lorsqu'un SBT est verrouillé ou déverrouillé, respectivement. La fonction "locked" permet de vérifier l'état de verrouillage d'un SBT en fonction de son identifiant.
 
+Tous les smart contracts ont une couverture de 100% pour les lignes, les branches, les fonctions et les instructions.
+
+| File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Lines |
+|-----------------------------|---------|----------|---------|---------|-----------------|
+| contracts/                  |  100    |  100     |  100    |  100    |                 |
+|  CarMaintenanceBook.sol     |  100    |  100     |  100    |  100    |                 |
+|  CarMaintenanceLoyalty.sol  |  100    |  100     |  100    |  100    |                 |
+|  IERC5192.sol               |  100    |  100     |  100    |  100    |                 |
+|-----------------------------|---------|----------|---------|---------|-----------------|
+| All files                   |  100    |  100     |  100    |  100    |                 |
+|-----------------------------|---------|----------|---------|---------|-----------------|
+
+
 ### Front
 Voici la liste de la stack utilisée pour la réalisation du projet.
 - Rainbow Kit
