@@ -921,7 +921,7 @@ export const contractAbiCarMaintenanceBook = [
         "type": "function"
     }
 ];
-export const contractAddressCarMaintenanceBook = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+export const contractAddressCarMaintenanceBook = process.env.NEXT_PUBLIC_ENV === 'dev' ? '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512' : '0x1DfaaaEc2A1d7bD7759BBB7E726263F061F7eaF4';
 
 export const contractAbiCarMaintenanceLoyalty = [
     {
@@ -1446,4 +1446,4 @@ export const contractAbiCarMaintenanceLoyalty = [
       "type": "function"
     }
   ];
-export const contractAddressCarMaintenanceLoyalty = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+export const contractAddressCarMaintenanceLoyalty = process.env.NEXT_PUBLIC_ENV === 'dev' ? '0x5FbDB2315678afecb367f032d93F642f64180aa3' : '0xa9dFFD8e576ea282821e762066df53ee71d3e411';
