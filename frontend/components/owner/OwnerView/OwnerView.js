@@ -21,7 +21,7 @@ const OwnerView = () => {
 
     const getEthAddressStart = (address) => address.substring(0, 5);
     const getEthAddressMiddle = (address) => address.substring(6, address.length-5);
-    const getEthAddressEnd = (address) => address.substring(address.length-4, address.length);
+    const getEthAddressEnd = (address) => address.substring(address.length-5, address.length);
     const copyToClipboard = (address) => navigator.clipboard.writeText(address);
     // Toasts
     const toast = useToast()

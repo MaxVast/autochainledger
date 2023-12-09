@@ -124,6 +124,7 @@ const CarMaintenanceBookContextProvider = ({children}) => {
                         model: null,
                         image: null
                     });
+                    setTokens([...fetchedTokens]);
                     const response = await fetch(newUriToken)
                     if (!response.ok) {
                         if (response.status === 504) {
