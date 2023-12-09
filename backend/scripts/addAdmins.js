@@ -13,7 +13,7 @@ async function main() {
   try {
     await contract.addAdmins('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'); // Contract 'CarMaintenanceBook'
     await contract.addAdmins(deployer.address); // Owner
-    await contract.addAdmins('0x71bE63f3384f5fb98995898A86B02Fb2426c5788'); // Other Address
+    await contract.addAdmins('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'); // Other Address
   } catch(error) {
     console.log(error)
   }
