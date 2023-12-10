@@ -55,4 +55,6 @@ Voici la liste de la stack utilisée pour la partie Smart Contract.
 - ERC20
 - Librairie OpenZeppelin
 <br/><br/>
+
+### Image Front
 <img src="https://cdn.discordapp.com/attachments/369933291916361728/1183361726293475411/autochain-ledger.png" alt="homepage autochain Ledger" width="650" height="auto" loading="lazy" />
